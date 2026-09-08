@@ -1,0 +1,424 @@
+{
+  "metadata": {
+    "project_name": "xuanti-fenxi 选题分析",
+    "version": "final",
+    "status": "reviewed",
+    "skill_architecture": "single_skill",
+    "created_at": "20260908",
+    "updated_at": "20260908",
+    "description": "对池内单个选题做深度分析：切入点穷举排序 + 事实核验三分 + C分层闸门立项建议，产出分析卡，人拍板后状态迁移"
+  },
+  "nodes": [
+    {
+      "id": "N1",
+      "label": "触发：分析这个选题",
+      "type": "start",
+      "phase": "触发",
+      "owner": "Claude",
+      "input": [
+        "用户消息",
+        "选题池行（状态=候选）"
+      ],
+      "action": "用户从选题池指定一个选题并要求分析（'分析这个'），读取选题行全部字段",
+      "output": [
+        "选题行数据"
+      ],
+      "status": "confirmed",
+      "notes": "池状态=候选才允许进入；其他状态提示当前阶段。不支持批量——一次一个全深评（Q3确认）"
+    },
+    {
+      "id": "N2",
+      "label": "硬前提检查：资料包就绪？",
+      "type": "decision",
+      "phase": "准备",
+      "owner": "Claude",
+      "input": [
+        "选题行.ziliaocaiji_doc_url",
+        "资料完整度字段"
+      ],
+      "action": "检查 ziliaocaiji 六章资料包是否存在且完整度≥60%",
+      "output": [
+        "就绪 / 缺失清单"
+      ],
+      "status": "confirmed",
+      "notes": "继承 scriptwriter 铁律：资料不够拒绝开工。Q4确认：缺失时自动调ziliaocaiji补采不问；补采失败报缺失清单终止"
+    },
+    {
+      "id": "N3a",
+      "label": "调 ziliaocaiji 补采资料",
+      "type": "tool",
+      "phase": "准备",
+      "owner": "Claude",
+      "input": [
+        "选题",
+        "缺失清单"
+      ],
+      "action": "调用 ziliaocaiji 技能做六章深挖，产出资料包；池状态迁移为资料就绪",
+      "output": [
+        "资料包（六章报告+信源标注）"
+      ],
+      "tools": [
+        "ziliaocaiji（软依赖，固定上游）"
+      ],
+      "status": "confirmed"
+    },
+    {
+      "id": "N3",
+      "label": "机评：动态评估法（默认重档）",
+      "type": "tool",
+      "phase": "机评",
+      "owner": "Claude",
+      "input": [
+        "选题",
+        "资料包"
+      ],
+      "action": "默认重档：Node1 语义解析扩词（含实体还原+消歧）→ Node2 建20频道临时对标池（滤>500万粉）→ Node3 YouTube Data API 精算离群倍率+反作弊 → Node4 四维加权。API 限流/不可用时降级轻档（WebSearch 定性+置信度标注，明确标注\"定性档\"）",
+      "output": [
+        "机评四维分+总分",
+        "临时对标池清单"
+      ],
+      "tools": [
+        "WebSearch",
+        "YouTube Data API（可用时精算，降级定性档+置信度标注）"
+      ],
+      "status": "confirmed",
+      "notes": "Q1确认：默认重档，限流降级轻档；降级时标注置信度"
+    },
+    {
+      "id": "N4",
+      "label": "C 分层闸门：硬条件全过？",
+      "type": "decision",
+      "phase": "闸门",
+      "owner": "Claude",
+      "input": [
+        "机评结果",
+        "资料包"
+      ],
+      "action": "硬条件逐项检查：①Archive≥2项硬核信源 ②合规风险（敏感赛道预警）③获得感≥40（反常识点≥1）。任一不过→不出分析卡，直接建议不做并附理由",
+      "output": [
+        "全过 / 未过项+理由"
+      ],
+      "status": "confirmed",
+      "notes": "C分层（Q5确认）：硬条件一视同仁不豁免；热点牵出的新主体（如China GT→赛事运营公司）在N1选题精化时自然处理，素材达标即可立项"
+    },
+    {
+      "id": "N5",
+      "label": "事实核验（独立 pass）",
+      "type": "process",
+      "phase": "核验",
+      "owner": "Claude",
+      "input": [
+        "资料包"
+      ],
+      "action": "借 fact-check：按五分类（事实断言/统计数字/归属引语/定义/历史声明）提取全部可验证主张 → 三分：已证实(≥2独立源)/待验证(SIFT四步后仍冲突，冲突保持可见)/观点(标归属方)；无源主张→盲区清单。借 source-verification：待验证项走 SIFT，五问核查",
+      "output": [
+        "事实核验表（三分+置信度）",
+        "盲区清单+补采建议"
+      ],
+      "status": "confirmed",
+      "notes": "独立 pass 铁律：不与切入点分析混合（借 fact-check 的 F1-F5 原理，交付须达 F5）"
+    },
+    {
+      "id": "N6",
+      "label": "切入点穷举+排序+分桶",
+      "type": "process",
+      "phase": "切入点",
+      "owner": "Claude",
+      "input": [
+        "选题",
+        "资料包",
+        "核验后事实集",
+        "机评对标池"
+      ],
+      "action": "穷举全部切入角度 → 三维度评分排序：空白度40%（对标池谁讲过谁没讲，借content-gap命名证据纪律）/凭证密度30%（资料包硬事实计数）/反常识强度30%（'原本以为…结果'点数）→ 分桶 Quick Wins/Strategic Builds/Long-term → 每角度附差异点+优势+劣势",
+      "output": [
+        "切入点穷举表（排序+分桶+优劣）"
+      ],
+      "status": "confirmed",
+      "notes": "用户确认的第一核心价值"
+    },
+    {
+      "id": "N7",
+      "label": "组装分析卡+无出处扫描",
+      "type": "tool",
+      "phase": "交付准备",
+      "owner": "Claude",
+      "input": [
+        "切入点穷举表",
+        "事实核验表",
+        "机评分",
+        "闸门结果"
+      ],
+      "action": "按分析卡模板组装 outputs/analysis/<topic>.md；机械防线：扫描全文无出处断言/引语/统计（借 journalism source-attribution-check），发现即退回 N5 补凭证",
+      "output": [
+        "分析卡 v1（过扫描）"
+      ],
+      "status": "confirmed",
+      "notes": "防AI编造不靠自觉靠机器。Q6确认：卡面同时呈现闸门三条件✓/✗（主）+四维分小字（辅）"
+    },
+    {
+      "id": "N8",
+      "label": "人审闸门：做/改方向/不做",
+      "type": "manual",
+      "phase": "人审",
+      "owner": "用户",
+      "input": [
+        "分析卡"
+      ],
+      "action": "人读卡拍板：做（选定切入角度）/ 改方向（说明改什么）/ 不做（附理由可选）",
+      "output": [
+        "立项决定",
+        "选定切入角度"
+      ],
+      "status": "confirmed",
+      "notes": "全系统唯一人工介入点（设计哲学：机器管流量，人管判断）",
+      "clarification_ids": []
+    },
+    {
+      "id": "N9",
+      "label": "交付+状态迁移",
+      "type": "end",
+      "phase": "收尾",
+      "owner": "Claude",
+      "input": [
+        "立项决定"
+      ],
+      "action": "做→状态=已立项（卡片连同切入角度供 jiaoben-sop7 消费）；不做→状态=淘汰（附理由回写池，供 KW-06 进化器统计）；改方向→按反馈重跑 N6",
+      "output": [
+        "池状态更新",
+        "下游可消费的分析卡文件"
+      ],
+      "status": "confirmed"
+    }
+  ],
+  "edges": [
+    {
+      "source": "N1",
+      "target": "N2",
+      "label": "选题指定",
+      "type": "normal"
+    },
+    {
+      "source": "N2",
+      "target": "N3a",
+      "label": "资料缺失或完整度<60%",
+      "type": "exception"
+    },
+    {
+      "source": "N3a",
+      "target": "N3",
+      "label": "补采完成",
+      "type": "normal"
+    },
+    {
+      "source": "N2",
+      "target": "N3",
+      "label": "资料就绪",
+      "type": "normal"
+    },
+    {
+      "source": "N3",
+      "target": "N4",
+      "label": "机评完成",
+      "type": "normal"
+    },
+    {
+      "source": "N4",
+      "target": "N5",
+      "label": "硬条件全过",
+      "type": "normal"
+    },
+    {
+      "source": "N4",
+      "target": "N9",
+      "label": "任一不过→建议不做（轻量结论，不出分析卡）",
+      "type": "exception"
+    },
+    {
+      "source": "N5",
+      "target": "N6",
+      "label": "核验完成",
+      "type": "normal"
+    },
+    {
+      "source": "N6",
+      "target": "N7",
+      "label": "穷举完成",
+      "type": "normal"
+    },
+    {
+      "source": "N7",
+      "target": "N8",
+      "label": "过扫描",
+      "type": "normal"
+    },
+    {
+      "source": "N7",
+      "target": "N5",
+      "label": "扫描发现无出处断言",
+      "type": "retry"
+    },
+    {
+      "source": "N8",
+      "target": "N9",
+      "label": "做/不做",
+      "type": "normal"
+    },
+    {
+      "source": "N8",
+      "target": "N6",
+      "label": "改方向（换切入角度，重跑N6穷举）",
+      "type": "retry"
+    }
+  ],
+  "clarifications": [
+    {
+      "id": "Q1",
+      "priority": "P1",
+      "node_id": "N3",
+      "type": "ambiguous_action",
+      "question": "机评跑什么档位？A) 默认 WebSearch 定性档+置信度标注，仅当你说'精算'才调 YouTube Data API 全量；B) 每次自动 API 精算（慢但全）",
+      "assumption": "A——定性档优先， API 按你的指令触发",
+      "impact": "影响 N3 的工具依赖和耗时",
+      "status": "answered",
+      "answer": "默认重档，API限流/不可用时降级轻档（WebSearch定性+置信度标注）"
+    },
+    {
+      "id": "Q2",
+      "priority": "P1",
+      "node_id": "N8",
+      "type": "branch_unclear",
+      "question": "'改方向'的具体语义是什么？A) 换切入角度重跑穷举（留在 fenxi 内）；B) 选题本身改表述/换焦点（退回池子重新走）；C) 其他",
+      "assumption": "A——改方向=对切入点穷举提反馈，重跑 N6",
+      "impact": "影响 N8→N6 回环边的语义和重跑范围",
+      "status": "answered",
+      "answer": "A：换切入角度重跑N6穷举（留在fenxi内），不是改选题本身"
+    },
+    {
+      "id": "Q3",
+      "priority": "P2",
+      "node_id": "N8",
+      "type": "branch_unclear",
+      "question": "是否支持批量模式——'把池里 Top5 候选全分析了我挑一个'？批量会稀释每份深度（N5/N6 是重活）",
+      "assumption": "默认单条深评；批量只跑 N3+N4 轻评出对比表，选定一个后再走 N5-N9 全深评",
+      "impact": "影响触发协议和 N3 的输出形态",
+      "status": "answered",
+      "answer": "A：不支持批量，一次一个全深评；防止用批量替代tansuo排序"
+    },
+    {
+      "id": "Q4",
+      "priority": "P1",
+      "node_id": "N2",
+      "type": "missing_owner",
+      "question": "资料包缺失时：A) 自动调 ziliaocaiji 补采（无需问你）；B) 问你'要不要先补采资料'再动",
+      "assumption": "A——ziliaocaiji 是固定上游，自动调（软依赖有降级：补采失败则报缺失清单终止）",
+      "impact": "影响 N2b 的触发方式和异常路径",
+      "status": "answered",
+      "answer": "A：自动调ziliaocaiji补采不问；补采失败才报缺失清单终止"
+    },
+    {
+      "id": "Q5",
+      "priority": "P2",
+      "node_id": "N4",
+      "type": "branch_unclear",
+      "question": "热门时效选题是否破格——比如重大突发新闻素材薄（Archive不达标），C闸门硬条件要不要给时效豁免通道？",
+      "assumption": "不豁免——硬条件一视同仁；时效热点由 tansuo 层的高 Demand 分自然浮现，不达标就淘汰（保护'值得一讲'底线）",
+      "impact": "影响 N4 的规则完整性",
+      "status": "answered",
+      "answer": "A：不豁免；热点新主体在N1选题精化时处理，素材达标即可立项（China GT案例）"
+    },
+    {
+      "id": "Q6",
+      "priority": "P2",
+      "node_id": "N3",
+      "type": "ambiguous_action",
+      "question": "机评分在分析卡上呈现多少？用户说过'打分退居辅助'——是只显示闸门结果（过/不过），还是四维分也列出？",
+      "assumption": "卡上同时呈现：闸门三条件逐项✓/✗ + 四维分小字附后——既尊重辅助定位又保留可追溯性",
+      "impact": "影响分析卡模板的信息层级",
+      "status": "answered",
+      "answer": "B：闸门三条件逐项✓/✗为主，四维分小字附后"
+    }
+  ],
+  "audit": [
+    {
+      "node_id": "N1",
+      "dimension": "流程断链",
+      "finding": "池的读取路径未定义",
+      "severity": "P1",
+      "resolution": "assumption-fixed：读本地 topic-pool.md 为主（飞书是给人看的视图，机器不依赖）",
+      "clarification_id": null
+    },
+    {
+      "node_id": "N2",
+      "dimension": "理解不清",
+      "finding": "资料完整度由谁评定未定义",
+      "severity": "P1",
+      "resolution": "assumption-fixed：优先读 ziliaocaiji 报告自带完整度字段；缺失时 fenxi 按六章齐全度自算",
+      "clarification_id": null
+    },
+    {
+      "node_id": "N3a",
+      "dimension": "交叉依赖",
+      "finding": "ziliaocaiji 不可用时的降级未定义",
+      "severity": "P1",
+      "resolution": "assumption-fixed：软依赖降级链——ziliaocaiji 失败→报缺失清单终止，问人硬做还是放弃",
+      "clarification_id": null
+    },
+    {
+      "node_id": "N3",
+      "dimension": "交叉依赖",
+      "finding": "YouTube Data API 凭据来源未定义",
+      "severity": "P1",
+      "resolution": "assumption-fixed：EXTEND.md 配置+环境变量兜底；均无则直接走轻档",
+      "clarification_id": null
+    },
+    {
+      "node_id": "N4",
+      "dimension": "交叉依赖",
+      "finding": "硬核信源/冲突词库判断依赖 tansuo 领域画像文件，依赖未在流程中显式化",
+      "severity": "P0",
+      "resolution": "assumption-fixed：软依赖+降级——有画像按画像判；无画像（手工建的池）用通用硬核信源清单兜底（主流媒体报道+官方文件+深度专访≥2项）",
+      "clarification_id": null
+    },
+    {
+      "node_id": "N5",
+      "dimension": "理解不清",
+      "finding": "待验证项 SIFT 核查深度无上限，成本失控风险",
+      "severity": "P1",
+      "resolution": "assumption-fixed：每项 SIFT 限 2-3 次搜索；仍冲突保持'待验证'可见，不转确定结论",
+      "clarification_id": null
+    },
+    {
+      "node_id": "N6",
+      "dimension": "决策规则可执行性",
+      "finding": "'穷举'数量无规则，LLM 可能给 3 个也可能给 20 个",
+      "severity": "P1",
+      "resolution": "assumption-fixed：固定 5-8 个；<3 个视为穷举不充分，N7 自检不通过",
+      "clarification_id": null
+    },
+    {
+      "node_id": "N7",
+      "dimension": "决策分支",
+      "finding": "无出处扫描重试无上限，可能死循环",
+      "severity": "P1",
+      "resolution": "assumption-fixed：同一主张补采 2 次仍无源→降级标'待验证'，不阻塞交付",
+      "clarification_id": null
+    },
+    {
+      "node_id": "N8",
+      "dimension": "流程断链",
+      "finding": "人审载体（人在哪看卡）未定义",
+      "severity": "P1",
+      "resolution": "assumption-fixed：分析卡写飞书文档（人看）+本地 md（机器）双写",
+      "clarification_id": null
+    },
+    {
+      "node_id": "N9",
+      "dimension": "流程断链",
+      "finding": "状态迁移写回策略未定义；淘汰理由未设计回流进化器路径",
+      "severity": "P1",
+      "resolution": "assumption-fixed：fenxi 人工触发→即时双写本地+飞书；池行加'淘汰原因'字段，KW-06 定期读取统计",
+      "clarification_id": null
+    }
+  ]
+}
