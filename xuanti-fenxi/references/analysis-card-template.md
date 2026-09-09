@@ -1,6 +1,6 @@
 # 选题分析卡模板
 
-> 文件名：`<选题编号>-<选题标题>.md`，存于 `~/Documents/YouTuber工作流/选题分析卡/`。
+> 文件名：`<选题编号>-<选题标题>.md`，存于 `config.yaml → cards.output_dir`（默认 `~/Documents/YouTuber工作流/选题分析卡/`）。
 > 文件头 YAML 记录状态机（中断恢复时读取），全文必须过 `scripts/scan_unsourced.py` 扫描。
 
 ```markdown
