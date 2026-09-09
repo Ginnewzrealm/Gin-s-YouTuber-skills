@@ -24,7 +24,23 @@ score_materials.py — yt-ziliao 资料评分与精选脚本
       "verification": "多方证实",
       "stance": "中立"
     }
+  ],
+  "rejected": [                        # 可选：搜索/合并阶段拒收来源（审计链，不许静默丢弃）
+    {"title": "...", "url": "https://...", "reason": "拒收原因必填（内容农场/与#N重复/无关/源头不明）"}
+  ],
+  "skipped": [                         # 可选：搜索维度显式跳过记录
+    {"dimension": "抖音", "query": "尝试的查询词", "reason": "跳过原因必填"}
   ]
+}
+
+输出在 v2.5.0 起含 audit 块：
+{
+  "audit": {
+    "rejected_count": N,               # 透传输入 rejected（reason 缺失进 invalid）
+    "skipped_count": M,                # 透传输入 skipped（reason 缺失进 invalid）
+    "invalid": [{"index", "kind", ...}],
+    "unselected": [{"title", "url", "reason"}]   # 精选阶段落选条目，逐条带理由，零静默丢弃
+  }
 }
 """
 
@@ -211,6 +227,28 @@ def completeness_score(items: list[dict]) -> dict[str, Any]:
     }
 
 
+def audit_summary(data: dict[str, Any]) -> dict[str, Any]:
+    """审计链校验：rejected/skipped 透传并校验 reason 必填（缺失进 invalid）。
+
+    v2.5.0 铁规：收录要记录，拒绝也要记录——判断可追溯，不许静默丢弃。
+    """
+    rejected = data.get("rejected", []) or []
+    skipped = data.get("skipped", []) or []
+    invalid = []
+    for i, r in enumerate(rejected):
+        if not r.get("reason"):
+            invalid.append({"index": i, "kind": "rejected", "title": r.get("title", "")})
+    for i, s in enumerate(skipped):
+        if not s.get("reason"):
+            label = s.get("dimension") or s.get("platform") or ""
+            invalid.append({"index": i, "kind": "skipped", "dimension": label})
+    return {
+        "rejected_count": len(rejected),
+        "skipped_count": len(skipped),
+        "invalid": invalid,
+    }
+
+
 def select_items(items: list[dict]) -> dict[str, Any]:
     """
     精选 30-80 条，满足分布约束：
@@ -225,6 +263,7 @@ def select_items(items: list[dict]) -> dict[str, Any]:
 
     selected = []
     counts = defaultdict(int)
+    skip_records: dict[str, str] = {}  # url -> 落选理由（审计链）
 
     for item, score in scored:
         authority = item.get("authority", "中")
@@ -242,15 +281,21 @@ def select_items(items: list[dict]) -> dict[str, Any]:
         if len(selected) >= 30:
             if high_multi / total < 0.30:
                 if category != "高_多方证实":
+                    skip_records[item.get("url", "")] = (
+                        "分布约束：高权威+多方证实占比不足 30%，本条暂缓（补搜同类后可入选）"
+                    )
                     continue
             if medium_single / total > 0.40:
                 if category == "中_单一来源":
+                    skip_records[item.get("url", "")] = "分布约束：中权威+单一来源占比超 40%，本条暂缓"
                     continue
             if low_single / total > 0.15:
                 if category == "低_单一来源":
+                    skip_records[item.get("url", "")] = "分布约束：低权威+单一来源占比超 15%，本条暂缓"
                     continue
             if low_doubt / total > 0.05:
                 if category in ("低_存疑待核实", "低_存疑"):
+                    skip_records[item.get("url", "")] = "分布约束：低权威+存疑占比超 5%，本条暂缓"
                     continue
 
         selected.append((item, score))
@@ -265,8 +310,24 @@ def select_items(items: list[dict]) -> dict[str, Any]:
         for item, score in scored:
             if item.get("url") not in existing_urls:
                 selected.append((item, score))
+                skip_records.pop(item.get("url", ""), None)  # 兜底纳入，撤销落选记录
             if len(selected) >= 30:
                 break
+
+    # 审计链：落选的每条必有理由（约束暂缓 / 80 条上限截断），零静默丢弃
+    selected_urls = {i.get("url") for i, _ in selected}
+    unselected = [
+        {
+            "title": i.get("title", ""),
+            "url": i.get("url", ""),
+            "reason": skip_records.get(
+                i.get("url", ""),
+                "精选上限 80 条截断（按可信度分排序，本条排在入选线之后）",
+            ),
+        }
+        for i in items
+        if i.get("url") not in selected_urls
+    ]
 
     avg_score = sum(s for _, s in selected) / len(selected) if selected else 0
 
@@ -320,6 +381,7 @@ def select_items(items: list[dict]) -> dict[str, Any]:
             }
             for i, s in selected
         ],
+        "unselected": unselected,
     }
 
 
@@ -348,12 +410,12 @@ def generate_suggestions(completeness: dict, selection: dict) -> list[str]:
     return suggestions
 
 
-def main():
-    if len(sys.argv) < 2:
-        print(f"用法: python3 {sys.argv[0]} <materials.json>", file=sys.stderr)
+def main_argv(argv: list[str]) -> None:
+    if len(argv) < 2:
+        print(f"用法: python3 {argv[0]} <materials.json>", file=sys.stderr)
         sys.exit(1)
 
-    input_path = sys.argv[1]
+    input_path = argv[1]
     data = load_materials(input_path)
     items = data.get("items", [])
 
@@ -364,16 +426,23 @@ def main():
     completeness = completeness_score(items)
     selection = select_items(items)
     suggestions = generate_suggestions(completeness, selection)
+    audit = audit_summary(data)
+    audit["unselected"] = selection.get("unselected", [])
 
     result = {
         "topic": data.get("topic", ""),
         "input_count": len(items),
         "completeness": completeness,
         "selection": selection,
+        "audit": audit,
         "suggestions": suggestions,
     }
 
     print(json.dumps(result, ensure_ascii=False, indent=2))
+
+
+def main():
+    main_argv(sys.argv)
 
 
 if __name__ == "__main__":

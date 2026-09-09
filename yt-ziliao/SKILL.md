@@ -19,6 +19,20 @@ description: |
 
 > 触发 → 读表定位 → 全网搜索 → 资料梳理 → 生成报告 → 飞书输出 → 回填链接
 
+## 禁区：采集层不做分析层的活（v2.5.0）
+
+本技能只**挖掘、记录、整理**，以下判断一律不生产，留给下游：
+
+| 不做 | 归谁 |
+|------|------|
+| 不归纳"核心论点"、不评哪方观点更有理 | yt-fenxi N5 三分 / N5.5 站队 |
+| 不推荐切入角度、不写推荐理由/预估难度/差异化优势/潜在风险 | yt-fenxi N6 穷举 + 人拍板 |
+| 不对争议点做倾向判断（§3.5 只配对） | yt-fenxi N5.5 |
+| 不决定素材怎么用、不写故事主线 | yt-jiaoben |
+| 不静默丢弃任何来源 | 拒收/跳过必须落盘（附录审计链） |
+
+一句话：**把战场原样画下来是本职，选哪场仗打是 fenxi 的事，讲好这场仗是 jiaoben 的事。**
+
 ## 文件结构
 
 ```text
@@ -41,6 +55,8 @@ yt-ziliao/
 └── scripts/
     ├── score_materials.py
     └── opencli_adapter.py   # OpenCLI 封装层（步骤 4.5/5/11 使用）
+└── tests/
+    └── test_score_materials.py   # 回归测试（v2.5.0 起）：python3 tests/test_score_materials.py
 ```
 
 > 注意：`runtime/` 目录下的文件为运行时生成，**不应打包到分发技能包中**。打包前请清空或排除 `runtime/` 目录。
@@ -78,6 +94,12 @@ python3 scripts/score_materials.py <materials.json>
       "verification": "多方证实",
       "stance": "中立"
     }
+  ],
+  "rejected": [   // v2.5.0 审计链：搜索/合并阶段拒收来源，reason 必填
+    { "title": "...", "url": "https://...", "reason": "内容农场/与#N重复/无关/源头不明" }
+  ],
+  "skipped": [    // v2.5.0 审计链：搜索维度显式跳过记录，reason 必填
+    { "dimension": "抖音", "query": "尝试的查询词", "reason": "平台封闭" }
   ]
 }
 ```
@@ -109,11 +131,21 @@ python3 scripts/score_materials.py <materials.json>
     },
     "passed": true,
     "conditional_pass": false,
-    "selected": [{ "title": "...", "url": "...", "credibility": 88.0 }]
+    "selected": [{ "title": "...", "url": "...", "credibility": 88.0 }],
+    "unselected": [{ "title": "...", "url": "...", "reason": "落选原因（分布约束/80条截断）" }]
+  },
+  "audit": {   // v2.5.0 审计链：透传 rejected/skipped 并校验 reason 必填
+    "rejected_count": 5,
+    "skipped_count": 2,
+    "invalid": [],
+    "unselected": [{ "title": "...", "url": "...", "reason": "..." }]
   },
   "suggestions": ["D4 立场覆盖不足，补搜质疑方观点"]
 }
 ```
+
+> 审计链铁规：每条素材最终只有两种状态——入选 selected 或落选 unselected（reason 必填），
+> 加上 rejected（拒收）/ skipped（跳过）四类全落盘，**零静默丢弃**。报告附录 A.1-A.3 从这里抄录。
 
 ### runtime/.paused/<topic>.json
 
@@ -350,6 +382,7 @@ Skill(skill="lark-base")    # 多维表格读写
 - 每个 Agent **目标** ≥20条有效资料，合计 **目标** ≥60条
 - 单 Agent 未达 20 条不阻断，以综合完整度评分为准
 - 素材记录：标题、URL、来源平台、发布日期、语言、可信度
+- **审计链（v2.5.0）**：搜到但不采用的来源必须当场记入 materials.json `rejected[]`（reason 必填：内容农场/与已收录重复/无关/源头不明）；某平台/查询维度搜不到或不可达，记入 `skipped[]`（reason 必填）。**禁止静默丢弃**——收录与拒收都要可追溯
 
 搜索完成后调用 `scripts/score_materials.py` 计算完整度评分（D1-D7，含 D7 历史脉络）。
 
@@ -366,7 +399,7 @@ Skill(skill="lark-base")    # 多维表格读写
 
 ### 步骤 6：资料梳理
 
-子 Agent 只负责本平台内去重。中央合并节点收到所有结果后执行全局去重（URL 完全一致 + 标题相似度 >85%）。
+子 Agent 只负责本平台内去重。中央合并节点收到所有结果后执行全局去重（URL 完全一致 + 标题相似度 >85%）。**去重丢弃的来源必须同时记入 `rejected[]`（reason："与已收录 #N 重复"），不许静默丢弃。**
 
 对每条资料标注：
 - **类型**：新闻报道/官方发布/社交媒体/论坛/视频/学术等
@@ -396,7 +429,7 @@ yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.
 | `overall` + D1-D7 分项 | N2 / N3 | 就绪判定 + 机评 Archive 维度参考 |
 | **D7 历史脉络覆盖度** | N6 深度揭示力评分 | D7 < 40 → 深度评分旁标"原料不足" |
 | 素材清单（标题/URL/平台/日期/可信度） | N5 核验 + N4 闸门① | 信源计数（工商/司法/深度报道级 ≥2）与逐条核验 |
-| 报告「观点分析」章 + 反常识点 | N4 闸门③ | 获得感 ≥40 的计分原料 |
+| 报告「观点整理」章（条目清单，无倾向归纳）+ 反常识点 | N4 闸门③ | 获得感 ≥40 的计分原料 |
 | 报告 3.5「争议点原料清单」 | N5.5 核心争议点提炼 | 争议配对原料（双方主张+来源+可裁决性），fenxi 在此层选定本期主争议点 |
 | 涉及敏感主体（报告内标注） | N4 闸门② | 标雷区，供下游法律预审 |
 | 报告「历史沿革」类素材 | N6 ②历史脉络层 | 历史层角度的论据原料 |
@@ -406,6 +439,8 @@ yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.
 ### 步骤 7：生成报告
 
 按六章模板撰写，格式见 [references/report-template.md](references/report-template.md)。
+
+**附录「拒收与跳过清单」从 score_materials.py 输出的 `audit` 块抄录**（A.1 rejected / A.2 skipped / A.3 unselected），不得凭记忆填写。
 
 每写完一章更新进度文件 `report_chN: done`。
 
@@ -496,4 +531,6 @@ yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.
 - 不编造信息，搜不到标注「暂缺/存疑」
 - 禁止在未经复查的情况下回复"已写入"
 - **自检失败必须阻断写入**，等待用户确认
+- **拒收/跳过必须落盘，不许静默丢弃**（v2.5.0 审计链：收录要记录，拒绝也要记录）
+- **观点只整理条目不归纳论点；角度只盘点不推荐**（v2.5.0：分析层判断一律不生产）
 - 技能层不设超时，依赖底层工具超时和断点续跑

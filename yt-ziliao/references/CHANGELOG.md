@@ -4,6 +4,26 @@
 
 ## 2026-09-09
 
+### v2.5.0 — 专注化改造 + 审计链（采集层不做分析层的活）
+
+> 背景：星宇案实战暴露三层角色混乱——采集阶段写出"推荐理由/核心论点/主线倾向"，干了分析的活。
+> 本版借鉴 gin-tutorial-source-scan 的两个核心机制：**schema 里不给分析留座位** + **拒绝也落盘的可追溯审计链**。
+
+| 变更 | 说明 | 文件 |
+|------|------|------|
+| 禁区声明 | SKILL.md 新增"采集层不做分析层的活"：不归纳核心论点/不推荐角度/不写难度优势风险/不站队/不静默丢弃 | SKILL.md |
+| 模板 §三 | 「观点分析」→「观点整理（条目清单）」：删"核心论点"归纳段，3.1 只数条数不归纳主张，3.2-3.4 改条目表（主张/归属方/来源/链接） | references/report-template.md |
+| 模板 §5.2 | 「主流方式分析」→「竞品覆盖清点」：删"被做透/还有空间"结论词，只留事实记录（谁讲过什么+证据） | references/report-template.md |
+| 模板 §5.3 | 「差异化切入建议」→「候选角度清单」：删推荐理由/适合平台/预估难度/差异化优势/潜在风险，只留角度/类型/代表内容/关联素材索引四列 | references/report-template.md |
+| 附录审计链 | 新增「拒收与跳过清单」A.1 rejected / A.2 skipped / A.3 unselected，三类为空填"无"不得省略 | references/report-template.md |
+| 审计链脚本 | score_materials.py：输入支持 rejected[]/skipped[]（reason 必填，缺行进 invalid）；输出新增 audit 块 + selection.unselected（落选逐条带理由，零静默丢弃）；main() 拆出 main_argv() 供测试 | scripts/score_materials.py |
+| 回归测试 | 新增 tests/test_score_materials.py（9 项）：全量可追溯（selected+unselected=input）、理由非空、rejected/skipped 校验、分布约束回归 | tests/ |
+| 流程落盘点 | 步骤 5 搜索拒收/跳过当场记 materials.json；步骤 6 去重丢弃记 rejected；步骤 7 附录从 audit 块抄录 | SKILL.md |
+| 输出契约 | 「观点分析」章措辞同步为「观点整理」（条目清单，无倾向归纳），fenxi N4 闸门③消费路径不变 | SKILL.md |
+| 自检清单 | 新增三项：无核心论点归纳段/角度只盘点不评价/审计附录齐全 | references/report-template.md |
+
+---
+
 ### v2.4.0 — 争议点原料清单（四层内容链上游补全）
 
 | 变更 | 说明 | 文件 |
