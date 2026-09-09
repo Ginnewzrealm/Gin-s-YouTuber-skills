@@ -1,0 +1,27 @@
+# yt-jiaoben 配置模板（复制为 config.yaml 并填值；config.yaml 已 gitignore 不入库）
+# token/ID 原样全文填写，禁止缩写——缩写是 400 错误事故源
+
+pool:
+  base_token: ""        # 必填：飞书多维表格 token（选题池所在 base）
+  table_id: ""          # 必填：选题表 ID（tbl 前缀）
+
+paths:
+  output_dir: "~/Documents/YouTuber工作流/定稿脚本"   # 本地脚本存档目录
+  drafts_dir: "runtime/.drafts"                     # 草稿目录（相对技能根）
+
+doc:
+  folder_token: ""      # 飞书云盘文件夹 token（定稿脚本飞书文档存放处）
+
+channel:
+  stage: "nano"         # 频道阶段：nano(<1万)/micro(1-10万)/small(10-100万)/mid/large——决定钩子变体开放范围
+  language: "zh"        # 产出语言：zh / en / both
+
+script:
+  duration_min: 20      # 时长档位（拍板：只保留 20-30 一档）
+  duration_max: 30
+  wpm_anchor: 280       # 字数锚定（合格区间 260-320，fupan 校准后可改）
+  state_readonly: true  # 选题状态只读（confirmed 状态下写脚本，不迁状态）
+
+upstream:
+  fenxi_skill: "yt-fenxi"     # 上游分析技能名（软依赖：消费 N9 输出契约）
+  ziliao_skill: "yt-ziliao"   # 上游资料技能名（软依赖：补采凭证）
