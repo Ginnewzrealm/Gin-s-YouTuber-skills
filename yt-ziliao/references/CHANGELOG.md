@@ -2,6 +2,23 @@
 
 ---
 
+## 2026-09-09
+
+### v2.3.0 — siwen 实战摩擦点修复（七项）
+
+| 变更 | 说明 | 文件 |
+|------|------|------|
+| 新增字段格式真源 | 移植 lark-field-formats.md：URL 字段 `{text, link}` 对象结构（text 在前）、token 原样全文禁缩写；步骤 9 回填处挂铁规指针 | references/lark-field-formats.md, SKILL.md |
+| 文档标题白名单 | create 前必做：长破折号→短横线、emoji/特殊符号删除、白名单字符集（中英数+`-_ :`），空标题兜底 `资料报告-<日期>` | references/write-strategy.md §〇, SKILL.md 步骤 8 |
+| 降级态规则 | 新增步骤 4.6：进入 WebSearch/WebFetch 降级态必须打印损失范围+等用户确认；损失明文（登录墙/视频元数据/JS 渲染页）；精选阈值收紧（平均可信度 ≥85、低权威存疑 0%） | SKILL.md |
+| 输出契约 | 新增「输出契约（下游 yt-fenxi 收货单）」：materials.json/报告字段 → yt-fenxi N2/N4/N5/N6 消费节点映射，缺 overall/D7/URL 即交付未完工 | SKILL.md |
+| 反常识探测 | 关键词矩阵新增「反常识探测」行：追问式查询词（为什么/失败原因/争议/背后），为下游 C 闸门③获得感供原料 | references/search-strategy.md |
+| 扫描脚本修复 | scan_unsourced.py 豁免 ``` 围栏代码块（JSON 字段名不再被当无出处断言误拦 356 处） | yt-fenxi/scripts/scan_unsourced.py |
+
+> 注：D7 历史脉络维度、降级显式告知（fenxi 侧）、历史沿革关键词为 9/9 早些批次已落地，见 yt-fenxi 仓库提交。
+
+---
+
 ## 2026-08-19
 
 ### v2.2.0 — OpenCLI 集成与浏览器自动管理

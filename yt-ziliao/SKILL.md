@@ -29,6 +29,7 @@ yt-ziliao/
 │   ├── search-strategy.md
 │   ├── write-strategy.md
 │   ├── feishu-table-rules.md
+│   ├── lark-field-formats.md
 │   ├── platform-mappings.md
 │   └── CHANGELOG.md
 ├── runtime/              # 运行时生成文件
@@ -314,6 +315,22 @@ Skill(skill="lark-base")    # 多维表格读写
 - 此步骤由主流程串行执行，子 Agent 不操作浏览器开关。
 - `ensure_browser_with_profile` 会在 profile 不匹配时强制重启 Chrome，**会关闭用户当前所有 Chrome 窗口**，这是策略 B 的自动行为。
 
+### 步骤 4.6：降级态规则（`opencli_available=false` 时强制生效）
+
+**显式告知（强制）**：进入降级态时，必须向用户打印一行告知并**等确认**后方可继续：
+
+> ⚠️ 本次采集走 WebSearch/WebFetch 降级档（OpenCLI 不可用，原因：___）。精度损失：登录墙平台内容取不到、视频元数据缺失、JS 渲染页面只能拿到摘要。确认继续请回复"继续"，或修复 Chrome/OpenCLI 后重试。
+
+**损失范围（明文）**：
+- 登录墙内容（部分社媒、论坛）→ 不可达，对应维度得分按实际缺失计
+- 视频平台 → 只有标题/简介级元数据，无逐字稿
+- 依赖 JS 渲染的页面 → WebFetch 只能拿到服务端渲染部分
+
+**精选阈值收紧（降级态）**：
+- 平均可信度分 ≥85（常态 ≥70）
+- 低权威+存疑 占比 0%（常态 ≤5%）
+- 降级原因写入报告头部元信息，供下游 yt-fenxi 判断原料质量
+
 ### 步骤 5：全网搜索
 
 4个子Agent并行，但**不直接操作浏览器**：
@@ -369,6 +386,22 @@ Skill(skill="lark-base")    # 多维表格读写
 - `passed=false` 且 `conditional_pass=true`（冷门领域，总素材 <10 条）→ 向用户说明分布约束已放宽，询问是否继续生成报告；用户确认后继续，用户拒绝时进入步骤 11 清理后退出
 - `passed=false` 且 `conditional_pass=false` → 按 suggestions 补搜或用户豁免
 
+### 输出契约（下游 yt-fenxi 收货单）
+
+yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.json` 为准：
+
+| yt-ziliao 产物 | yt-fenxi 消费节点 | 用途 |
+|---|---|---|
+| 报告 URL（回填「资料采集」字段） | N2 资料就绪检查 | 链接有效 + `overall ≥ 60` 才算就绪 |
+| `overall` + D1-D7 分项 | N2 / N3 | 就绪判定 + 机评 Archive 维度参考 |
+| **D7 历史脉络覆盖度** | N6 深度揭示力评分 | D7 < 40 → 深度评分旁标"原料不足" |
+| 素材清单（标题/URL/平台/日期/可信度） | N5 核验 + N4 闸门① | 信源计数（工商/司法/深度报道级 ≥2）与逐条核验 |
+| 报告「观点分析」章 + 反常识点 | N4 闸门③ | 获得感 ≥40 的计分原料 |
+| 涉及敏感主体（报告内标注） | N4 闸门② | 标雷区，供下游法律预审 |
+| 报告「历史沿革」类素材 | N6 ②历史脉络层 | 历史层角度的论据原料 |
+
+缺 `overall`/`D7`/报告 URL 任一项 = 交付未完工，yt-fenxi 有权按"资料未就绪"退回。
+
 ### 步骤 7：生成报告
 
 按六章模板撰写，格式见 [references/report-template.md](references/report-template.md)。
@@ -406,6 +439,7 @@ Skill(skill="lark-base")    # 多维表格读写
 
 见 [references/write-strategy.md](references/write-strategy.md)：
 - 通过 `Skill(skill="lark-doc")` 创建/写入文档
+- **创建前文档标题必须按 write-strategy.md §〇 白名单清洗**（长破折号/emoji 会触发 400 安全校验）
 - 分块策略（<30KB整体 / 30-50KB按章 / >50KB二次切分）
 - 超长段落增加段落内部切分兜底
 - 四级降级：write → append → table → pending
@@ -418,6 +452,8 @@ Skill(skill="lark-base")    # 多维表格读写
 - 重新搜集 → 覆盖旧链接，无需确认（仅当用户明确说「重新搜集」「再搜一次」「更新资料」时触发）
 
 回填后复查，不一致则重试。
+
+**格式铁规**：「资料采集」是 URL 字段，必须写 `{"text": "显示文本", "link": "https://..."}` 对象（text 在前 link 在后），裸字符串必报 URLFieldConvFail；token/ID 从 `runtime/config.json` 原样全文取、禁缩写。格式真源见 [references/lark-field-formats.md](references/lark-field-formats.md)。
 
 ### 步骤 10：完成汇报
 

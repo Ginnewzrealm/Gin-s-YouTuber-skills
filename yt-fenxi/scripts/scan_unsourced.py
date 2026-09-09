@@ -12,7 +12,7 @@
   且行内(±相邻行)不含任何信源标记。
 - 信源标记: 据|来源|信源|显示|报告|财报|招股书|裁判文书|判决书|
   天眼查|企查查|SEC|EDGAR|维基|36氪|晚点|财经|采访|访谈|声明|公告|http
-- 豁免行: 模板表头、YAML frontmatter、checklist 空项、分桶标题。
+- 豁免行: 模板表头、YAML frontmatter、checklist 空项、分桶标题、``` 围栏代码块整段。
 """
 import re
 import sys
@@ -48,7 +48,13 @@ def scan(path: str):
                 yaml_end = i
                 break
     hard, warn = [], []
+    in_fence = False  # ``` 围栏代码块内整段豁免（JSON/代码字段名不是断言）
     for i, ln in enumerate(lines):
+        if ln.strip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
         if i <= yaml_end:
             continue
         if EXEMPT.search(ln):
