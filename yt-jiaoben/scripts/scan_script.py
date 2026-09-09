@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 """脚本硬指标扫描器（机械防线）。
 
-按 references/good-script-definition.md 的 A1-A6 前置指标做机械计数。
+按 references/good-script-definition.md 的 A1-A6 前置指标 + v0.4 故事层规则做机械计数。
 防"脚本看着行但指标不过"不靠自觉，靠机器拦截；本脚本是交付闸门。
 
-用法: scan_script.py <脚本.md> [--duration 25] [--keywords "词1,词2,词3"]
-  --duration: 预估时长（分钟），缺省时从元数据头解析，都没有则跳过 WPM 检查
+用法: scan_script.py <交付物.md> [--duration 25] [--keywords "词1,词2,词3"]
+  --duration: 预估时长（分钟），缺省时从元数据头解析，都没有则跳过 WPM/开场闸检查
 退出码: 0 = 通过（可有警告）; 1 = 存在硬拦截，脚本不得交付。
 
 规则:
 - 硬拦截: 离场词 / 伪现场感 / 主观语言 / 未公开信息 / 全场零凭证 / 超长句 >35 字
+  / 开场3分钟财报术语（A稿区）/ B稿区全片零 [观点] 标记
 - 警告: 超字句 21-35 字 / WPM 越界 / 拍点密度不足 / 字每切越界 / 抽象形容词 / SEO 词缺失
+  / A稿零黑体金句 / B稿 [内容层] 覆盖率不足 / 单源事实无限定词 / 英文人名未标注中文译名
+- A/B 分区: 按 Part 3a/A稿/纯口播 与 Part 3b/B稿/三轨 标题切分；无标题时按是否含 【听觉】 判为 B 或 A
 - 三轨格式识别（2026-09-09 实战修复）:
   * 三轨正文常整体包在 ``` 围栏里——围栏**内容照常扫描**，只跳围栏标记行本身
   * 听觉块 = 【听觉】行 + 后续以引号开头的续行（一段台词跨多行），到下一个 【 轨标记为止
@@ -31,6 +34,12 @@ ABSTRACT_ADJ = re.compile(r"非常(愤怒|激动|紧张|开心|高兴)|气氛(�
 CREDENTIAL = re.compile(r"\[凭证|凭证\s*\d|来源[:：]")
 QUOTE = re.compile(r'["“『「](.*?)["”』」]', re.S)
 CUT_SEP = re.compile(r"[→+、]")
+# v0.4 故事层：开场 3 分钟禁财报术语（HR/指南 Part 四-1）
+STORY_FINANCE = re.compile(
+    r"\d{6}\s*\.?\s*(SH|SZ|sh|sz)|商誉|股权占比|营收占比|持股比例|净利润|财报|估值|市占率")
+# 英文人名（两名连写，首字母大写）；URL 先剥掉防误报
+LATIN_NAME = re.compile(r"(?<![A-Za-z])([A-Z][a-z]{1,15} [A-Z][a-z]{1,15})(?![A-Za-z])")
+URL_STRIP = re.compile(r"https?://\S+")
 
 def load_script(path):
     """读取脚本，返回 (扫描行列表, 全文本)。围栏内容保留，只跳过标记行。"""
@@ -49,6 +58,22 @@ def load_script(path):
             continue
         scan.append(ln)
     return scan, "\n".join(scan)
+
+def split_ab(lines):
+    """按标题切 A 稿/B 稿区。返回 (a_lines, b_lines)；都无则按是否含【听觉】整体判 B 或 A。"""
+    a_idx = b_idx = None
+    for i, ln in enumerate(lines):
+        if not re.match(r"^#{1,3}\s", ln):
+            continue
+        if a_idx is None and re.search(r"Part\s*3a|A\s*稿|纯口播", ln):
+            a_idx = i
+        if b_idx is None and re.search(r"Part\s*3b|B\s*稿|三轨", ln):
+            b_idx = i
+    if a_idx is None and b_idx is None:
+        return ([], lines) if any("【听觉】" in ln for ln in lines) else (lines, [])
+    a = lines[a_idx:(b_idx if b_idx is not None and b_idx > a_idx else len(lines))] if a_idx is not None else []
+    b = lines[b_idx:(a_idx if a_idx is not None and a_idx > b_idx else len(lines))] if b_idx is not None else []
+    return a, b
 
 def parse_meta(lines):
     dur, kws = None, []
@@ -209,6 +234,43 @@ def main():
         need = int(dur / 1.0) if dur else 0  # 每 50 秒 ≥1 次 ≈ 每分钟 ≥1 次
         if c < max(1, need // 2):
             w(f"SEO 词「{k}」出现 {c} 次（目标约 {need} 次/全片）")
+
+    # ---- v0.4 故事层检查 ----
+    a_lines, b_lines = split_ab(lines)
+    if a_lines:
+        a_text = "\n".join(a_lines)
+        if dur:
+            front = a_text[:int(dur * 35)]  # 开场 3 分钟 ≈ 12.5% × 280 字/分
+            hits = sorted(set(STORY_FINANCE.findall(front)))
+            if hits:
+                h(f"开场 3 分钟财报术语: 命中 {hits}（主线铁律：起幕立现场，数据只作转幕道具）")
+        if not re.search(r"\*\*[^*\n]{4,}\*\*", a_text):
+            w("A 稿零黑体金句（四幕每幕尾需 1 句锚定观点，**黑体**标注）")
+    if b_lines:
+        b_text = "\n".join(b_lines)
+        n_opinion = len(re.findall(r"\[观点\]", b_text))
+        if n_opinion == 0:
+            h("B 稿全片零 [观点] 标记（HR-8：没有自己观点的视频不得交付）")
+        n_control = len(re.findall(r"【控制】", b_text))
+        n_labeled = len(re.findall(r"\[内容层\]", b_text))
+        if n_control >= 3 and n_labeled < n_control * 0.7:
+            w(f"[内容层] 覆盖率不足: {n_labeled}/{n_control} 段（HR-8 四层标注：事实/争议/转述/观点）")
+        for i, ln in enumerate(b_lines):
+            if "事实-单源" in ln and not re.search(r"据|疑似|反映", "\n".join(b_lines[max(0, i-8):i+1])):
+                w(f"单源事实未限定: {ln.strip()[:40]}（应带'据X反映/疑似'）")
+    # 双语人名：首个出现处前 30 字内无中文 = 未标注
+    no_url = URL_STRIP.sub("", body)
+    seen, unannotated = set(), []
+    for m in LATIN_NAME.finditer(no_url):
+        name = m.group(1)
+        if name in seen:
+            continue
+        seen.add(name)
+        ctx = no_url[max(0, m.start() - 30):m.start()]
+        if not re.search(r"[一-鿿]", ctx):
+            unannotated.append(name)
+    if unannotated:
+        w(f"英文人名未标注中文译名: {unannotated}（规范：首次出现'中文译名（English Name）'）")
 
     print(f"指标基线: 口播 {spoken} 字 | 听觉块 {len(blocks)} | 视觉段 {n_visual} | "
           f"估算切换 {cuts} | 拍点 {beats}" + (f" | 时长 {dur:.0f} 分钟" if dur else ""))
