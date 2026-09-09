@@ -34,7 +34,7 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 - **空则填、不覆盖**：回填「脚本字数」等字段时已有内容绝不冲掉。
 - **禁离场词**："以上就是本期全部内容/感谢收看/点赞关注/下期再见"——出现即硬拦截。
 - **禁自我调研**：所有素材来自 yt-ziliao 报告 + yt-fenxi 分析卡；缺失→回 yt-ziliao 补采桥接。
-- **token/ID 原样全文**：从 config.yaml 取，缩写必 400；URL 字段写 `{text, link}` 对象 text 在前（见 yt-ziliao/references/lark-field-formats.md）。
+- **token/ID 原样全文**：从 config.yaml 取，缩写必 400；回填字段前必须先 `+field-list` 查真实字段类型——字段名带"链接"≠URL 类型（实测「选题脚本链接」是 text，只收纯字符串；格式细节见 yt-ziliao/references/lark-field-formats.md）。
 - **每次阶段跳转同步更新脚本文件头 `当前阶段` 字段**；断点恢复只读文件续跑。
 
 ## Progress
@@ -43,6 +43,7 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 脚本工程进度（选题编号 T-XXXX-XXX）
 阶段 1/6：输入契约校验 [自动]
 - [ ] Step 0 N9 九字段 + 报告完整度≥60 + config 就绪 [自动]
+- [ ] Step 0.5 老选题 N9 契约补建（九字段缺失时，从 yt-fenxi 分析卡+池记录反推，人确认后写入） [自动+确认]
 阶段 2/6：原爆点筛选
 - [ ] Step 1 挖 5-10 候选画面（yt-ziliao 报告+fenxi 反常识点） [自动]
 - [ ] Step 2 五维评分（≥4.0 进 Top3 备选） [自动]
@@ -80,6 +81,8 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 - 九字段齐全 + yt-ziliao 报告链接有效 + 报告完整度 ≥60 → 通过
 - 缺项/完整度不足 → 报缺失清单，指明回 yt-fenxi 或 yt-ziliao，**终止不硬跑**
 - config.yaml 缺失 → 从 config.template.yaml 复制，走初始化问答（池 token/存档目录/飞书文件夹/频道阶段）后重跑
+
+**老选题 N9 契约补建（Step 0.5，必跑）**：N9 输出契约 2026-09-09 才建立，此前 confirmed 的老选题池记录必然缺字段（T-2026-008 实战踩过：跑到阶段 2 才发现契约不齐，只能停下来补）。此时**不停机硬跑、不跳过**：从 yt-fenxi 分析卡 + 池记录已有字段反推九字段，列出补建清单（字段名→取值来源→拟填值）找人确认后写入分析卡，再进阶段 2。补建本身不改选题方向，不触发重新立项。
 
 ### 阶段 2：原爆点筛选
 
