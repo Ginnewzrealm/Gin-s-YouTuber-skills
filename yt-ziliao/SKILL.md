@@ -434,6 +434,7 @@ yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.
 | 报告 3.5「争议点原料清单」 | N5.5 核心争议点提炼 | 争议配对原料（双方主张+来源+可裁决性），fenxi 在此层选定本期主争议点 |
 | 涉及敏感主体（报告内标注） | N4 闸门② | 标雷区，供下游法律预审 |
 | 报告「历史沿革」类素材 | N6 ②历史脉络层 | 历史层角度的论据原料 |
+| **manifest.json**（v2.6 起，`build_manifest.py` 从定稿报告机械解析） | N2 就绪检查 + fenxi 消费对账 | 机器可读交接清单：materials[]（id/url/立场）/disputes[]/angles[]/audit。落盘路径=core 共享配置 `dirs.reports`；缺 manifest → fenxi 降级为"文档 URL 抽取"模式 |
 
 缺 `overall`/`D7`/报告 URL 任一项 = 交付未完工，yt-fenxi 有权按"资料未就绪"退回。
 
@@ -442,6 +443,15 @@ yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.
 按六章模板撰写，格式见 [references/report-template.md](references/report-template.md)。
 
 **附录「拒收与跳过清单」从 score_materials.py 输出的 `audit` 块抄录**（A.1 rejected / A.2 skipped / A.3 unselected），不得凭记忆填写。
+
+**报告定稿后跑 `scripts/build_manifest.py`** 生成 manifest.json 并落盘到 core 共享配置（`~/.config/youtube-skills/config.json` → `dirs.reports`）：
+
+```bash
+python3 scripts/build_manifest.py <报告.md> --topic-id <编号> \
+    --report-url <飞书链接> [--score score输出.json] --out <dirs.reports>/<编号>-manifest.json
+```
+
+manifest = 下游机器闸门的唯一交接物（素材 ID 集合供 audit_consumption.py 差集对账）；缺失 = 交付未完工。
 
 每写完一章更新进度文件 `report_chN: done`。
 
@@ -499,6 +509,7 @@ yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.
 📄 飞书文档：[选题名称] 资料汇总分析报告
 🔗 文档链接：https://....feishu.cn/docx/...
 📋 已更新选题清单「资料采集」字段
+🧾 manifest.json：<路径>（v2.6 起必交付）
 ⚠️ 待核实项：N条（见上方清单）
 ⏱️ 本次资料采集耗时 X 分 X 秒
 ```

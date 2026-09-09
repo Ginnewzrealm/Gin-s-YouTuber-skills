@@ -4,6 +4,22 @@
 
 ## 2026-09-09
 
+### v2.6.0 — manifest.json 交接清单（文件即契约的机器可读半）
+
+> 背景：v2.5.0 审计链解决了"ziliao 自己不静默丢弃"，但下游 fenxi 消费仍靠"读懂飞书文档"——
+> 防偷懒/消费对账需要机器可读的素材 ID 集合。本版补齐交接物：ziliao 交付 = 飞书文档（人读）+ manifest.json（机器读）。
+> 落盘路径由 youtube-skills core 共享配置（`~/.config/youtube-skills/config.json` → dirs.reports）统一指定，技能内不硬编码。
+
+| 变更 | 说明 | 文件 |
+|------|------|------|
+| 新增脚本 | `build_manifest.py`：从定稿报告机械解析 materials[]（6.1 表）/disputes[]（3.5）/angles[]（5.1）/audit（附录 A.1-A.3，缺失警告不阻断兼容旧报告）；优先级：附录审计链 > --score 传入 > 空表+warning | scripts/build_manifest.py |
+| 测试 | 新增 tests/test_build_manifest.py（6 项）：三个解析器、附录校验、优先级、旧报告优雅降级 | tests/ |
+| 输出契约 | 新增 manifest.json 行：N2 就绪检查 + fenxi 消费对账的消费约定；缺 manifest → fenxi 降级"文档 URL 抽取"模式 | SKILL.md |
+| 流程落盘 | 步骤 7 报告定稿后跑 build_manifest.py；步骤 10 完成汇报增 manifest 路径行 | SKILL.md |
+| 回填实证 | T-2026-009 星宇报告（v2.4 交付）回填 manifest：22 素材/4 争议/6 角度，warnings 如实标注缺附录审计链 | 资料报告/T-2026-009-manifest.json |
+
+---
+
 ### v2.5.0 — 专注化改造 + 审计链（采集层不做分析层的活）
 
 > 背景：星宇案实战暴露三层角色混乱——采集阶段写出"推荐理由/核心论点/主线倾向"，干了分析的活。
