@@ -20,15 +20,18 @@
 |---|---|---|
 | text | 纯字符串 | `"选题标题": "萝卜快跑在武汉运营"` |
 | text（存 URL） | **仍是纯字符串**，直接写 URL | `"选题脚本链接": "https://feishu.cn/docx/xxx"` |
-| URL / 链接类 | **对象，text 键在前 link 键在后** | `"资料采集": {"text": "报告 v3.0", "link": "https://feishu.cn/docx/xxx"}` |
+| **text 字段存 URL**（本池主流） | **纯 URL 字符串**（飞书会自动渲染为 `[title](url)` markdown 链接） | `"资料采集": "https://feishu.cn/docx/xxx"` |
+| URL / 链接类（本池暂无） | **对象，text 键在前 link 键在后** | `{"text": "报告 v3.0", "link": "https://feishu.cn/docx/xxx"}` |
 
 ### URL 字段反例（本次实战踩过）
 
 ```json
+// ——— 以下是 URL 字段的常见反例（本池暂无 URL 字段，记录防呆用）———
 {"资料采集": {"link": "https://..."}}              // ✗ 缺 text，URLFieldConvFail
-{"资料采集": "https://..."}                        // ✗ 裸字符串，转换失败
 {"资料采集": {"link": "https://...", "text": "…"}} // ✗ 约定 text 在前 link 在后，照写防呆
-{"选题脚本链接": {"text": "脚本", "link": "https://..."}}  // ✗ 该字段实为 text 类型，只收纯字符串，对象报 800010701
+// ——— 以下是 text 字段存 URL 时的反例（"资料采集""选题脚本链接""YouTube URL""竞品参考"都属此类）———
+{"选题脚本链接": {"text": "脚本", "link": "https://..."}}  // ✗ text 字段收对象→800010701
+{"资料采集": [{"text":"x","link":"y"}]}            // ✗ text 字段收数组→800010701；数组用于 link/user/group 字段（需要 [{id}]）
 ```
 
 ## 三、异常速查
