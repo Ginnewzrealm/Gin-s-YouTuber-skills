@@ -37,7 +37,7 @@ PHASES = [
      "note": "资料就绪后 fenxi 在本阶段工作，N9 过闸才把状态迁到阶段三"},
     {"num": 4, "name": "脚本制作", "skill": "yt-jiaoben", "gate": "硬闸门③：定稿终审",
      "states": ["阶段三：确认选题", "阶段四：内容制作"]},
-    {"num": 5, "name": "发布包装", "skill": "agrici-metadata / zhizuo-brief [待开工]", "gate": None,
+    {"num": 5, "name": "发布包装", "skill": "agrici-metadata / yt-zhizuo [待开工]", "gate": None,
      "states": ["已发布"]},
     {"num": 6, "name": "数据复盘", "skill": "fupan [待开工]（唯一逆流：写回选题池）", "gate": None,
      "states": []},

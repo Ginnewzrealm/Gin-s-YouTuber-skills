@@ -21,7 +21,7 @@ YouTuber 创作工作流技能库。
 | 1 | `xuanti-tansuo` 选题探索 | 待建 | 互联网挖选题 → 简单评分排序 → 选题池；检索底层复用 trend-discovery / agrici-ideate |
 | 2 | `yt-fenxi` 选题分析 | ✅ 可用 | 惊奇点/事实/观点/争议/切入点/竞品切入与流量/我方调整 → 选题分析卡；上游固定接 yt-ziliao |
 | 3 | `yt-jiaoben` 脚本 | ✅ 可用 | 起承转合四幕+A 稿纯口播+B 稿三轨；四层内容标注；机检+法审 |
-| 4 | `zhizuo-brief` 制作四件套 | 待建 | 配音 brief / 分镜+B-roll 清单 / 剪辑 brief / 配乐提示，一次出齐 |
+| 4 | `yt-zhizuo` 制作四件套 | 待建 | 配音 brief / 分镜+B-roll 清单 / 剪辑 brief / 配乐提示，一次出齐 |
 | 5 | `fupan` 数据复盘 | 待建 | 底座复用 agrici `/youtube analyze`；自建"掉粉点→脚本段落映射"与"回流选题池/脚本参数" |
 
 ## 复用不建的资产

@@ -135,7 +135,7 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 | 输入 | yt-fenxi N9 九字段 + yt-ziliao 报告 URL + 完整度 ≥60 |
 | 时长档 | 只保留 20-30 分钟一档（拍板）；字数 5600-8400（280 字/分 ±10%） |
 | 输出 | 飞书 doc（含 Part 3a A 稿 + Part 3b B 稿，结构见模板 §四）+ 本地 A/B 双 md 存档 + 脚本字数回填（空则填） |
-| 下游 | fupan 消费：段落时间码坐标（留存掉粉点映射用）；制作四件套消费：B-Roll 清单+分镜 |
+| 下游 | fupan 消费：段落时间码坐标（留存掉粉点映射用）；yt-zhizuo 消费：B-Roll 清单+B 稿三轨（分镜内核） |
 | 校准 | 发布后 B1-B3 回流，滚动修正 wpm_anchor/软维度权重/子节点配比（记入 config 变更历史） |
 
 ## 依赖

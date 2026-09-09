@@ -181,7 +181,7 @@ radar-engine 产出（写实例 topic-pool.md 状态=候选）
 yt-fenxi 读取该选题行 + 调 yt-ziliao 六章深挖
       │
       ▼ 产出分析卡，人拍板立项 → 状态=已立项
-（后续 jiaoben-sop7 → zhizuo-brief → agrici metadata → fupan）
+（后续 jiaoben-sop7 → yt-zhizuo → agrici metadata → fupan）
 ```
 
 fenxi 立项闸门 = 机评分（动态评估法四维）+ 人审 checklist（Part 2 打分表 + Easel 反向维度补充）双轨呈现。
