@@ -43,6 +43,8 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 
 ## Progress
 
+被 youtube-skills（core）调用时：**不输出宏观进度**（宏观六阶段归 core 渲染，防重复），直接展示本 checklist。被单独调用时，先输出阶段定位句再展示。
+
 ```markdown
 脚本工程进度（选题编号 T-XXXX-XXX）
 阶段 1/6：输入契约校验 [自动]
