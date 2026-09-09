@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""xuanti-fenxi 环境自检（N0）。
+"""yt-fenxi 环境自检（N0）。
 
 每次技能触发时静默执行；全部通过只输出一行"环境就绪"。
 发现问题输出结构化报告（阻断 / 降级 / 提示），由主技能决定处置。
@@ -101,8 +101,8 @@ def main():
     else:
         cli_check("lark-cli", ["lark-cli", "--help"], "degrade",
                   "lark-cli 不可用，飞书池读写失效", "降级备用通道：用户粘贴选题行；迁移输出待迁移清单")
-        cli_check("ziliaocaiji", ["lark-cli", "base", "--help"], "degrade",
-                  "ziliaocaiji 不可用，资料补采失效", "资料缺失时本次分析终止，提示先安装/补采")
+        cli_check("yt-ziliao", ["lark-cli", "base", "--help"], "degrade",
+                  "yt-ziliao 不可用，资料补采失效", "资料缺失时本次分析终止，提示先安装/补采")
         api_key_check()
         output_dir_check(cfg)
         blocked = any(c["level"] == "block" and not c["ok"] for c in CHECKS)

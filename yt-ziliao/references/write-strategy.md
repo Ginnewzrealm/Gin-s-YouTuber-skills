@@ -1,6 +1,6 @@
 # 文档写入策略
 
-> `ziliaocaiji` 不直接调用 `lark-cli`。业务层决定写什么、如何分块、失败如何降级，实际的文档创建与写入通过 `Skill(skill="lark-doc")` 完成。`lark-doc` skill 内部可能使用 `lark-cli` 执行飞书 API 调用，但这由 lark-doc skill 自身管理，不在 ziliaocaiji 层配置。
+> `yt-ziliao` 不直接调用 `lark-cli`。业务层决定写什么、如何分块、失败如何降级，实际的文档创建与写入通过 `Skill(skill="lark-doc")` 完成。`lark-doc` skill 内部可能使用 `lark-cli` 执行飞书 API 调用，但这由 lark-doc skill 自身管理，不在 yt-ziliao 层配置。
 
 ---
 
@@ -68,7 +68,7 @@
 
 ## 四、文档权限与分享
 
-`ziliaocaiji` 生成的飞书文档默认继承所在文件夹的权限规则。如果 `doc_folder` 是用户私人文件夹，文档可能仅用户自己可访问。
+`yt-ziliao` 生成的飞书文档默认继承所在文件夹的权限规则。如果 `doc_folder` 是用户私人文件夹，文档可能仅用户自己可访问。
 
 需要明确分享时，由用户在飞书侧手动设置，或通过 `lark-doc` 技能的权限相关命令处理。本技能默认不主动修改文档权限。
 
@@ -88,4 +88,4 @@
 }
 ```
 
-详细重试历史（retry_history、error_code 等）由 lark-doc skill / lark-cli 自动生成，不在 ziliaocaiji 层规定。
+详细重试历史（retry_history、error_code 等）由 lark-doc skill / lark-cli 自动生成，不在 yt-ziliao 层规定。

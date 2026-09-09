@@ -178,7 +178,7 @@ radar-engine（唯一"真技能"）
 radar-engine 产出（写实例 topic-pool.md 状态=候选）
       │
       ▼ 人挑一个说"分析这个"（唯一人工介入点）
-xuanti-fenxi 读取该选题行 + 调 ziliaocaiji 六章深挖
+yt-fenxi 读取该选题行 + 调 yt-ziliao 六章深挖
       │
       ▼ 产出分析卡，人拍板立项 → 状态=已立项
 （后续 jiaoben-sop7 → zhizuo-brief → agrici metadata → fupan）

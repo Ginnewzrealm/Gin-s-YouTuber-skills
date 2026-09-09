@@ -28,7 +28,7 @@ class OpenCLIAdapter:
     """OpenCLI 采集接口封装。"""
 
     # 平台别名映射： skill 中的名称 -> OpenCLI 中可能的适配器名称
-    # 只包含 ziliaocaiji 场景中可能有 OpenCLI 适配器的平台
+    # 只包含 yt-ziliao 场景中可能有 OpenCLI 适配器的平台
     # 其他平台（百度、36氪、贴吧、豆瓣、BBC、NYT、Medium、arXiv、Google Scholar 等）
     # 直接走 WebSearch/WebFetch 降级，不在此映射中硬编码
     PLATFORM_ALIASES = {
@@ -248,7 +248,7 @@ class OpenCLIAdapter:
 
         return items
 
-    def fetch_url(self, url: str, session: str = "ziliaocaiji") -> Optional[Dict[str, Any]]:
+    def fetch_url(self, url: str, session: str = "yt-ziliao") -> Optional[Dict[str, Any]]:
         """
         使用 OpenCLI browser 打开并提取指定 URL 的内容。
         适合没有站点适配器或适配器读取失败的页面。
@@ -321,7 +321,7 @@ class OpenCLIAdapter:
                 except Exception as e:
                     print(f"[OpenCLIAdapter] 关闭标签 {page_id} 失败: {e}")
 
-    def close_session(self, session: str = "ziliaocaiji") -> bool:
+    def close_session(self, session: str = "yt-ziliao") -> bool:
         """释放指定的 OpenCLI browser 会话，并关闭该会话所有标签。"""
         if not self.is_installed():
             return False

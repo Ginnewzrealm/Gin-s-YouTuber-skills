@@ -1,4 +1,4 @@
-# xuanti-fenxi 配置模板
+# yt-fenxi 配置模板
 # 复制为 config.yaml 后由初始化问答填充（config.yaml 已被 gitignore，含个人 token 不入库）
 
 pool:

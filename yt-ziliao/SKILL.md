@@ -1,5 +1,5 @@
 ---
-name: ziliaocaiji
+name: yt-ziliao
 description: |
   当用户围绕某个选题或事件，要求进行**多源资料调研、整理和报告输出**时，使用本技能。
 
@@ -22,7 +22,7 @@ description: |
 ## 文件结构
 
 ```text
-ziliaocaiji/
+yt-ziliao/
 ├── SKILL.md              # 本文件
 ├── references/           # 静态参考文件（只读）
 │   ├── report-template.md
@@ -149,7 +149,7 @@ Skill(skill="lark-sheets")  # 电子表格读写
 Skill(skill="lark-base")    # 多维表格读写
 ```
 
-`ziliaocaiji` 只通过 `Skill()` 调用上述技能，不直接调用 `lark-cli`。业务层负责决定写什么、如何分块、失败如何降级；lark-* 技能负责实际执行飞书 API 调用（其内部可能使用 lark-cli 等工具，但对本技能不透明）。
+`yt-ziliao` 只通过 `Skill()` 调用上述技能，不直接调用 `lark-cli`。业务层负责决定写什么、如何分块、失败如何降级；lark-* 技能负责实际执行飞书 API 调用（其内部可能使用 lark-cli 等工具，但对本技能不透明）。
 
 ---
 
@@ -439,7 +439,7 @@ Skill(skill="lark-base")    # 多维表格读写
 
 主流程应使用 `try/finally`（或等效机制）确保本步骤在所有分支上执行：
 
-1. **释放 OpenCLI 会话**：调用 `OpenCLIAdapter.close_session("ziliaocaiji")`
+1. **释放 OpenCLI 会话**：调用 `OpenCLIAdapter.close_session("yt-ziliao")`
    - 返回 False 时记录失败原因，不阻断汇报
    - 若 `opencli_available=false`，`close_session()` 内部检查后会安全跳过
 2. **清理残留窗口/标签**：调用 `OpenCLIAdapter.cleanup_leaked_windows()`（macOS）

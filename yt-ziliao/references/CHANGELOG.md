@@ -1,4 +1,4 @@
-# ziliaocaiji 更新日志
+# yt-ziliao 更新日志
 
 ---
 
@@ -9,7 +9,7 @@
 | 变更 | 说明 | 文件 |
 |------|------|------|
 | 新增 OpenCLI 适配器 | `scripts/opencli_adapter.py` 封装 OpenCLI 安装检测、适配器发现、站点搜索、URL 提取、会话释放 | scripts/opencli_adapter.py |
-| 新增平台映射 | `references/platform-mappings.md` 列出 ziliaocaiji 场景下可能使用 OpenCLI 的平台及适配器 | references/platform-mappings.md |
+| 新增平台映射 | `references/platform-mappings.md` 列出 yt-ziliao 场景下可能使用 OpenCLI 的平台及适配器 | references/platform-mappings.md |
 | 搜索策略升级 | 明确 OpenCLI 优先、WebSearch/WebFetch 降级；子 Agent 不操作浏览器开关 | references/search-strategy.md |
 | 主流程升级 | SKILL.md 增加环境依赖检查中的 OpenCLI 检测、浏览器 profile 一次性绑定、步骤 4.5 浏览器就位检查、步骤 11 浏览器善后清理 | SKILL.md |
 | 配置扩展 | `runtime/config.json` 增加 env_check.opencli、browser_profile、browser 配置项 | runtime/config.json |
@@ -78,7 +78,7 @@
 | 目录结构重构 | runtime/ 与 references/ 分离；状态文件全部迁移到 runtime/ | 全局 |
 | 新增评分脚本 | `scripts/score_materials.py` 统一计算可信度分、D1-D6 完整度评分、精选分布约束 | scripts/score_materials.py |
 | 删除 quality-checklist.md | 内容合并到 report-template.md 自检规则 | references/report-template.md |
-| 明确依赖边界 | ziliaocaiji 只通过 Skill() 调用 lark-* 技能，不直接调用 lark-cli；依赖可用性在初始化阶段检查确认 | SKILL.md |
+| 明确依赖边界 | yt-ziliao 只通过 Skill() 调用 lark-* 技能，不直接调用 lark-cli；依赖可用性在初始化阶段检查确认 | SKILL.md |
 | 补齐分支终态 | 表格不可用、搜索工具失败、自检拒绝、章节生成失败、配置切换等分支完整定义 | SKILL.md |
 | 待核实清单持久化 | 新增 runtime/.verification/<topic>.json | SKILL.md / report-template.md |
 | 重新搜集条件 | 仅用户明确表达时才无需确认覆盖 | references/feishu-table-rules.md |

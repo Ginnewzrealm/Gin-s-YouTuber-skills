@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "project_name": "xuanti-fenxi 选题分析",
+    "project_name": "yt-fenxi 选题分析",
     "version": "final",
     "status": "reviewed",
     "skill_architecture": "single_skill",
@@ -33,19 +33,19 @@
       "phase": "准备",
       "owner": "Claude",
       "input": [
-        "选题行.ziliaocaiji_doc_url",
+        "选题行.yt-ziliao_doc_url",
         "资料完整度字段"
       ],
-      "action": "检查 ziliaocaiji 六章资料包是否存在且完整度≥60%",
+      "action": "检查 yt-ziliao 六章资料包是否存在且完整度≥60%",
       "output": [
         "就绪 / 缺失清单"
       ],
       "status": "confirmed",
-      "notes": "继承 scriptwriter 铁律：资料不够拒绝开工。Q4确认：缺失时自动调ziliaocaiji补采不问；补采失败报缺失清单终止"
+      "notes": "继承 scriptwriter 铁律：资料不够拒绝开工。Q4确认：缺失时自动调yt-ziliao补采不问；补采失败报缺失清单终止"
     },
     {
       "id": "N3a",
-      "label": "调 ziliaocaiji 补采资料",
+      "label": "调 yt-ziliao 补采资料",
       "type": "tool",
       "phase": "准备",
       "owner": "Claude",
@@ -53,12 +53,12 @@
         "选题",
         "缺失清单"
       ],
-      "action": "调用 ziliaocaiji 技能做六章深挖，产出资料包；池状态迁移为资料就绪",
+      "action": "调用 yt-ziliao 技能做六章深挖，产出资料包；池状态迁移为资料就绪",
       "output": [
         "资料包（六章报告+信源标注）"
       ],
       "tools": [
-        "ziliaocaiji（软依赖，固定上游）"
+        "yt-ziliao（软依赖，固定上游）"
       ],
       "status": "confirmed"
     },
@@ -310,11 +310,11 @@
       "priority": "P1",
       "node_id": "N2",
       "type": "missing_owner",
-      "question": "资料包缺失时：A) 自动调 ziliaocaiji 补采（无需问你）；B) 问你'要不要先补采资料'再动",
-      "assumption": "A——ziliaocaiji 是固定上游，自动调（软依赖有降级：补采失败则报缺失清单终止）",
+      "question": "资料包缺失时：A) 自动调 yt-ziliao 补采（无需问你）；B) 问你'要不要先补采资料'再动",
+      "assumption": "A——yt-ziliao 是固定上游，自动调（软依赖有降级：补采失败则报缺失清单终止）",
       "impact": "影响 N2b 的触发方式和异常路径",
       "status": "answered",
-      "answer": "A：自动调ziliaocaiji补采不问；补采失败才报缺失清单终止"
+      "answer": "A：自动调yt-ziliao补采不问；补采失败才报缺失清单终止"
     },
     {
       "id": "Q5",
@@ -353,15 +353,15 @@
       "dimension": "理解不清",
       "finding": "资料完整度由谁评定未定义",
       "severity": "P1",
-      "resolution": "assumption-fixed：优先读 ziliaocaiji 报告自带完整度字段；缺失时 fenxi 按六章齐全度自算",
+      "resolution": "assumption-fixed：优先读 yt-ziliao 报告自带完整度字段；缺失时 fenxi 按六章齐全度自算",
       "clarification_id": null
     },
     {
       "node_id": "N3a",
       "dimension": "交叉依赖",
-      "finding": "ziliaocaiji 不可用时的降级未定义",
+      "finding": "yt-ziliao 不可用时的降级未定义",
       "severity": "P1",
-      "resolution": "assumption-fixed：软依赖降级链——ziliaocaiji 失败→报缺失清单终止，问人硬做还是放弃",
+      "resolution": "assumption-fixed：软依赖降级链——yt-ziliao 失败→报缺失清单终止，问人硬做还是放弃",
       "clarification_id": null
     },
     {

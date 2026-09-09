@@ -1,7 +1,7 @@
 # OpenCLI 平台命令映射
 
 > 本文件供 `scripts/opencli_adapter.py` 参考，不直接写入 SKILL.md。
-> ziliaocaiji 中大部分平台没有 OpenCLI 适配器，优先使用 WebSearch/WebFetch；本文件只列出可能通过 OpenCLI 增强的平台。
+> yt-ziliao 中大部分平台没有 OpenCLI 适配器，优先使用 WebSearch/WebFetch；本文件只列出可能通过 OpenCLI 增强的平台。
 
 ---
 
@@ -19,7 +19,7 @@
 
 ## 无 OpenCLI 适配器的平台
 
-以下平台在 ziliaocaiji 的搜索分工中出现，但当前没有可靠 OpenCLI 适配器，直接走 WebSearch/WebFetch：
+以下平台在 yt-ziliao 的搜索分工中出现，但当前没有可靠 OpenCLI 适配器，直接走 WebSearch/WebFetch：
 
 - 百度、36氪、贴吧、豆瓣
 - BBC、NYT、Medium
@@ -63,9 +63,9 @@ cookie 策略平台可通过 `opencli <site> whoami` 检测登录状态：
 当站点适配器不存在或失败时，使用通用浏览器命令（均通过 `scripts/opencli_adapter.py` 封装）：
 
 ```bash
-opencli browser ziliaocaiji open <url> --window background
-opencli browser ziliaocaiji extract
-opencli browser ziliaocaiji tab close <page_targetId>
+opencli browser yt-ziliao open <url> --window background
+opencli browser yt-ziliao extract
+opencli browser yt-ziliao tab close <page_targetId>
 ```
 
 > `browser open` 返回 JSON 包含 `page`（targetId），提取后必须调用 `browser tab close <page>` 关闭该标签。`--keep-tab false` 仅适用于站点适配器命令，不适用于 `browser` 子命令。

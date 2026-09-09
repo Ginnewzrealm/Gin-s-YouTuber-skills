@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-score_materials.py — ziliaocaiji 资料评分与精选脚本
+score_materials.py — yt-ziliao 资料评分与精选脚本
 
 输入：整理后的素材 JSON（见下方 schema）
 输出：完整度评分、可信度分布、精选建议。当总素材 <10 条且未通过严格约束时，
