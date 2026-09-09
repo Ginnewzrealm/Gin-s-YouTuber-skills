@@ -4,7 +4,7 @@
 子命令：
     init      初始化问答：工作区路径（+选题池链接可跳过）→ 落盘共享配置
     route     路由建议：传池状态 → 输出该调用的子技能（纯映射，不读池）
-    progress  渲染宏观六阶段仪表盘
+    progress  渲染宏观七阶段仪表盘
     skills    检测 yt-* 子技能安装状态
 
 设计红线（违反即返工）：
@@ -14,6 +14,8 @@
 状态机语义（路由正确性的根基，改前必读）：
 - 「阶段三：确认选题」= 已过 N8 人审、已立项 → 该调 yt-jiaoben（不是 fenxi！fenxi 的活干完才会迁到这个状态）
 - 「阶段四：内容制作」= 脚本已交付 → 等人定稿终审（硬闸门③）
+- 「制作中」= 已过终审，四件套已交付 → 人做片（此阶段为手动状态，技能不动）
+- 「待发布」= 全片完成 → agrici metadata 出上传包（硬闸门④人挑标题）
 - 「阶段二：资料研究」= 双义态：资料未就绪 → yt-ziliao；就绪（有链接且完整度≥60）→ yt-fenxi
 """
 
@@ -25,7 +27,7 @@ from typing import Optional
 
 CONFIG_PATH = os.path.expanduser("~/.config/youtube-skills/config.json")
 
-# ---------- 宏观六阶段（硬闸门=状态迁移点上的人审；阶段3无独立池状态，寄生于阶段二就绪态） ----------
+# ---------- 宏观七阶段（硬闸门=状态迁移点上的人审；阶段3无独立池状态，寄生于阶段二就绪态） ----------
 
 PHASES = [
     {"num": 1, "name": "选题立项", "skill": "人（硬闸门①立项）", "gate": "硬闸门①：人立项",
@@ -37,10 +39,14 @@ PHASES = [
      "note": "资料就绪后 fenxi 在本阶段工作，N9 过闸才把状态迁到阶段三"},
     {"num": 4, "name": "脚本制作", "skill": "yt-jiaoben", "gate": "硬闸门③：定稿终审",
      "states": ["阶段三：确认选题", "阶段四：内容制作"]},
-    {"num": 5, "name": "发布包装", "skill": "agrici-metadata / yt-zhizuo [待开工]", "gate": None,
+    {"num": 5, "name": "内容制作", "skill": "yt-zhizuo", "gate": None,
+     "states": ["制作中"],
+     "note": "人定稿终审过闸后迁「制作中」；yt-zhizuo 出四件套 → 人做片（拍摄/剪辑）"},
+    {"num": 6, "name": "发布包装", "skill": "agrici /youtube metadata", "gate": "硬闸门④：人挑标题",
+     "states": ["待发布"],
+     "note": "人做完全片迁「待发布」；agrici 出上传包（标题变体/描述/标签/章节/缩略图 brief）→ 人上传"},
+    {"num": 7, "name": "数据复盘", "skill": "fupan [待开工]（唯一逆流：写回选题池）", "gate": None,
      "states": ["已发布"]},
-    {"num": 6, "name": "数据复盘", "skill": "fupan [待开工]（唯一逆流：写回选题池）", "gate": None,
-     "states": []},
 ]
 
 TERMINAL_ELIMINATED = "已淘汰"
@@ -54,8 +60,12 @@ def _phase_num_of(state: str) -> int:
         return 2
     if state in ("阶段三：确认选题", "阶段四：内容制作"):
         return 4
-    if state == "已发布":
+    if state == "制作中":
         return 5
+    if state == "待发布":
+        return 6
+    if state == "已发布":
+        return 7
     return 0
 
 
@@ -85,13 +95,19 @@ def route_advice(state: str, has_materials: bool, completeness: int) -> dict:
                 "next_action": "已过人审（状态即证据），调 yt-jiaoben 输入契约校验→脚本"}
     if state == "阶段四：内容制作":
         return {"state": state, "skill": "人（硬闸门③定稿终审）",
-                "next_action": "脚本已交付，等人定稿终审 → 制作四件套/发布包装（占位）"}
+                "next_action": "脚本已交付，等人定稿终审；过闸后迁「制作中」→ yt-zhizuo 出四件套"}
+    if state == "制作中":
+        return {"state": state, "skill": "yt-zhizuo",
+                "next_action": "四件套（配音/分镜/剪辑/配乐 brief）已交付，人做片：拍摄/AI 生成/剪辑/混音；全片完成后迁「待发布」"}
+    if state == "待发布":
+        return {"state": state, "skill": "agrici /youtube metadata",
+                "next_action": "调 agrici metadata 出上传包装包；人挑标题（硬闸门④）后人工上传，传完迁「已发布」"}
     return {"state": state, "skill": "未知（状态未登记）",
-            "next_action": "先对照池「选题状态」选项名核对，勿硬跑"}
+            "next_action": "先对照池「选题状态」选项名核对（含制作中/待发布选项），勿硬跑"}
 
 
 def render_macro(state: str) -> str:
-    """宏观六阶段仪表盘（指南 §10.2 格式；core 每轮渲染，子技能不重复宏观）。"""
+    """宏观七阶段仪表盘（指南 §10.2 格式；core 每轮渲染，子技能不重复宏观）。"""
     if state == TERMINAL_ELIMINATED:
         return "🎬 YouTuber 工作流进度\n\n该选题已淘汰（终态，仅档案）。如需重开：人改回阶段一 → 重新走链。"
 
@@ -100,21 +116,21 @@ def render_macro(state: str) -> str:
     lines = ["🎬 YouTuber 工作流进度", ""]
     for ph in PHASES:
         if ph["num"] < current_num:
-            lines.append(f"阶段 {ph['num']}/6：{ph['name']} [✓]")
+            lines.append(f"阶段 {ph['num']}/7：{ph['name']} [✓]")
         elif ph["num"] == current_num:
             gate = f"　← {ph['gate']}" if ph["gate"] else ""
-            lines.append(f"阶段 {ph['num']}/6：{ph['name']}　【当前：池状态={state}】{gate}")
+            lines.append(f"阶段 {ph['num']}/7：{ph['name']}　【当前：池状态={state}】{gate}")
             if ph.get("note"):
                 lines.append(f"　ℹ {ph['note']}")
             lines.append(f"　→ 该调：{ph['skill']}")
         else:
-            pending = "[待开工]" if not ph["states"] else "[待开始]"
-            lines.append(f"阶段 {ph['num']}/6：{ph['name']} {pending}")
+            pending = "[待开工]" if ("[待开工]" in ph["skill"] or not ph["states"]) else "[待开始]"
+            lines.append(f"阶段 {ph['num']}/7：{ph['name']} {pending}")
     if state == "阶段二：资料研究":
         lines.append("")
         lines.append("ℹ 阶段二为双义态：资料就绪（有链接+完整度≥60）→ 进入阶段3 yt-fenxi；未就绪 → yt-ziliao 补采")
     lines.append("")
-    lines.append("硬闸门三处：①立项（阶段一→二）②N8 人审（分析→阶段三）③定稿终审（阶段四→发布）——机器不得替人过闸")
+    lines.append("硬闸门四处：①立项（阶段一→二）②N8 人审（分析→阶段三）③定稿终审（阶段四→制作中）④挑标题（发布前）——机器不得替人过闸")
     return "\n".join(lines)
 
 
@@ -129,6 +145,7 @@ def default_config(workspace_root: str = "~/Documents/YouTuber工作流") -> dic
             "reports": "资料报告",     # ziliao 本地报告 + manifest.json 落这里
             "cards": "选题分析卡",      # fenxi 分析卡落这里
             "scripts_out": "脚本",      # jiaoben 脚本工作区
+            "briefs": "制作四件套",     # yt-zhizuo 本地存档落这里
         },
         "pool": {"base_token": "", "table_id": "",
                  "note": "选题池定位符；空则路由时现场问用户或读 yt-fenxi config.yaml"},
@@ -156,7 +173,7 @@ def resolve_dir(cfg: dict, key: str) -> str:
 # ---------- 子技能安装检测 ----------
 
 SKILL_SEARCH_DIRS = ["~/.agents/skills", "~/.claude/skills"]
-SUB_SKILLS = ["yt-ziliao", "yt-fenxi", "yt-jiaoben"]
+SUB_SKILLS = ["yt-ziliao", "yt-fenxi", "yt-jiaoben", "yt-zhizuo"]
 
 
 def detect_skills() -> dict:

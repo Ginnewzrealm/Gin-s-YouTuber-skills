@@ -43,6 +43,14 @@ class TestRouteAdvice(unittest.TestCase):
         adv = yc.route_advice("阶段四：内容制作", has_materials=True, completeness=85)
         self.assertEqual(adv["skill"], "人（硬闸门③定稿终审）")
 
+    def test_making_state_goes_to_zhizuo(self):
+        adv = yc.route_advice("制作中", has_materials=True, completeness=85)
+        self.assertEqual(adv["skill"], "yt-zhizuo")
+
+    def test_pending_publish_goes_to_agrici(self):
+        adv = yc.route_advice("待发布", has_materials=True, completeness=85)
+        self.assertIn("agrici", adv["skill"])
+
     def test_published_placeholder(self):
         adv = yc.route_advice("已发布", has_materials=True, completeness=85)
         self.assertIn("fupan", adv["skill"])
@@ -54,7 +62,7 @@ class TestRouteAdvice(unittest.TestCase):
 
     def test_every_phase_skill_field_nonempty(self):
         for state in ["阶段一：想法记录", "阶段二：资料研究", "阶段三：确认选题",
-                      "阶段四：内容制作", "已发布", "已淘汰"]:
+                      "阶段四：内容制作", "制作中", "待发布", "已发布", "已淘汰"]:
             adv = yc.route_advice(state, has_materials=True, completeness=85)
             self.assertTrue(adv["skill"], f"{state} 路由为空")
             self.assertTrue(adv["next_action"], f"{state} next_action 为空")
@@ -63,15 +71,15 @@ class TestRouteAdvice(unittest.TestCase):
 class TestRenderMacro(unittest.TestCase):
     """宏观仪表盘渲染：六阶段齐全、硬闸门标注、当前高亮、淘汰态展示。"""
 
-    def test_six_phases_and_gates(self):
+    def test_seven_phases_and_gates(self):
         out = yc.render_macro("阶段二：资料研究")
-        for kw in ["阶段 1/6", "阶段 2/6", "阶段 3/6", "阶段 4/6", "阶段 5/6", "阶段 6/6",
+        for kw in ["阶段 1/7", "阶段 2/7", "阶段 3/7", "阶段 4/7", "阶段 5/7", "阶段 6/7", "阶段 7/7",
                    "硬闸门", "当前"]:
             self.assertIn(kw, out)
 
     def test_phase_names_cover_chain(self):
         out = yc.render_macro("阶段一：想法记录")
-        for kw in ["选题立项", "资料采集", "选题分析", "脚本制作", "发布包装", "数据复盘"]:
+        for kw in ["选题立项", "资料采集", "选题分析", "脚本制作", "内容制作", "发布包装", "数据复盘"]:
             self.assertIn(kw, out)
 
     def test_eliminated_shown_as_terminal(self):
@@ -79,9 +87,10 @@ class TestRenderMacro(unittest.TestCase):
 
     def test_done_before_current(self):
         out = yc.render_macro("阶段三：确认选题")
-        # 当前阶段之前标 ✓，之后标 待开始
+        # 当前阶段之前标 ✓，之后标 待开始；fupan 阶段名自带 [待开工] 占位
         self.assertIn("[✓]", out)
-        self.assertIn("[待开工]", out)
+        self.assertIn("[待开始]", out)
+        self.assertIn("待开工", out)
 
 
 class TestWorkspaceConfig(unittest.TestCase):
@@ -92,6 +101,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         self.assertEqual(cfg["version"], 1)
         self.assertEqual(cfg["dirs"]["reports"], "资料报告")
         self.assertEqual(cfg["dirs"]["cards"], "选题分析卡")
+        self.assertEqual(cfg["dirs"]["briefs"], "制作四件套")
         self.assertTrue(cfg["workspace_root"].startswith("/"))  # ~ 已展开
 
     def test_roundtrip(self):
