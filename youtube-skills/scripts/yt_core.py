@@ -144,21 +144,16 @@ def render_macro(state: str) -> str:
 
 
 # ---------- 工作区共享配置（全系统唯一事实源；子技能只读不写） ----------
+# schema v2（2026-09-10 存储重构）：无任何本地目录项——持久层=飞书 .md，
+# 本地=各技能内 workspace（三档自清，见 SKILL.md 清理检查点）。
 
-def default_config(workspace_root: str = "~/Documents/YouTuber工作流") -> dict:
-    root = os.path.expanduser(workspace_root)
+def default_config() -> dict:
     return {
-        "version": 1,
-        "workspace_root": root,
-        "dirs": {
-            "reports": "资料报告",     # ziliao 本地报告 + manifest.json 落这里
-            "cards": "选题分析卡",      # fenxi 分析卡落这里
-            "scripts_out": "脚本",      # jiaoben 脚本工作区
-            "briefs": "制作四件套",     # yt-zhizuo 本地存档落这里
-            "keywords": "关键词库",     # yt-guanjianci 词库落这里
-        },
+        "version": 2,
+        "feishu_root_folder_token": "",
         "pool": {"base_token": "", "table_id": "",
                  "note": "选题池定位符；空则路由时现场问用户或读 yt-fenxi config.yaml"},
+        "workspace_ttl_days": 30,
         "initialized_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -174,10 +169,6 @@ def load_config(path: str = CONFIG_PATH) -> Optional[dict]:
         return None
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
-
-
-def resolve_dir(cfg: dict, key: str) -> str:
-    return os.path.join(cfg["workspace_root"], cfg["dirs"][key])
 
 
 # ---------- 子技能安装检测 ----------
@@ -207,7 +198,7 @@ def main() -> None:
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p_init = sub.add_parser("init", help="落盘默认工作区配置（问答由 Agent 完成，脚本只写盘）")
-    p_init.add_argument("--workspace", default="~/Documents/YouTuber工作流")
+    p_init.add_argument("--feishu-root", default="")
     p_init.add_argument("--base-token", default="")
     p_init.add_argument("--table-id", default="")
 
@@ -224,7 +215,8 @@ def main() -> None:
     args = ap.parse_args()
 
     if args.cmd == "init":
-        cfg = default_config(args.workspace)
+        cfg = default_config()
+        cfg["feishu_root_folder_token"] = args.feishu_root
         cfg["pool"]["base_token"] = args.base_token
         cfg["pool"]["table_id"] = args.table_id
         save_config(CONFIG_PATH, cfg)

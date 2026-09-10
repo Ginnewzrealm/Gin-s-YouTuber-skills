@@ -101,25 +101,23 @@ class TestWorkspaceConfig(unittest.TestCase):
     """工作区配置：默认值、路径展开、读写回环。"""
 
     def test_default_config(self):
-        cfg = yc.default_config("~/Documents/YouTuber工作流")
-        self.assertEqual(cfg["version"], 1)
-        self.assertEqual(cfg["dirs"]["reports"], "资料报告")
-        self.assertEqual(cfg["dirs"]["cards"], "选题分析卡")
-        self.assertEqual(cfg["dirs"]["briefs"], "制作四件套")
-        self.assertEqual(cfg["dirs"]["keywords"], "关键词库")
-        self.assertTrue(cfg["workspace_root"].startswith("/"))  # ~ 已展开
+        cfg = yc.default_config()
+        self.assertEqual(cfg["version"], 2)
+        self.assertIn("feishu_root_folder_token", cfg)
+        self.assertIn("pool", cfg)
+        self.assertIn("workspace_ttl_days", cfg)
+        self.assertEqual(cfg["workspace_ttl_days"], 30)
+        self.assertNotIn("dirs", cfg)
+        self.assertNotIn("workspace_root", cfg)
 
     def test_roundtrip(self):
         with tempfile.TemporaryDirectory() as d:
             p = os.path.join(d, "config.json")
-            yc.save_config(p, yc.default_config("~/Documents/YouTuber工作流"))
+            yc.save_config(p, yc.default_config())
             cfg = yc.load_config(p)
-            self.assertEqual(cfg["version"], 1)
-            self.assertIn("workspace_root", cfg)
-
-    def test_resolve_dir(self):
-        cfg = yc.default_config("~/Documents/YouTuber工作流")
-        self.assertEqual(yc.resolve_dir(cfg, "cards"), os.path.expanduser("~/Documents/YouTuber工作流/选题分析卡"))
+            self.assertEqual(cfg["version"], 2)
+            self.assertIn("feishu_root_folder_token", cfg)
+            self.assertIn("workspace_ttl_days", cfg)
 
 
 if __name__ == "__main__":
