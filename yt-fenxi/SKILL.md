@@ -108,7 +108,7 @@ description: Use when 用户指着选题池说"分析这个选题"或给出选�
 1. **读选题行**：经 lark-base 桥接（`references/lark-base-bridge.md`），用 `config.yaml` 的 base_token/table_id 按编号或标题定位记录。**读池纪律强制生效**（search/get 定位取数、list 分页 ≤10、输出管道截断）。入口状态必须是 `state_options.entry` 配置的选项（老新两版都认）；其他状态提示用户当前所处阶段，不重复分析。
 2. **选题精化**（N1 规则）：若用户意图是深挖主体的另一面（如 China GT：从赛事本身 → 赛事运营公司），在触发时确认新主体，更新选题行标题与一句话描述后进入分析。**这一步完成即锁死主体**，之后"改方向"只换角度不换主体。
 3. **资料就绪检查**（N2）：`资料采集` 字段有有效链接 且 `资料完整度 ≥ 60`？两个条件同时满足才算就绪。
-   - 就绪后检查 **manifest.json**（路径 = youtube-skills core 共享配置 `dirs.reports` 下 `<编号>-manifest.json`）：存在 → N5 起对账的机械原料；缺失 → 打印一行警告，降级"文档 URL 抽取"模式（旧版报告兼容），**不阻断**。
+   - 就绪后检查 **manifest.json**（经 `markdown +fetch 01b-资料清单.md` 提取 JSON 落 `workspace/<编号>/manifest.json`）：存在 → N5 起对账的机械原料；缺失 → 打印一行警告，降级"文档 URL 抽取"模式（旧版报告兼容），**不阻断**。
 4. **自动补采**（N2b，Q4 拍板不问人）：未就绪 → 调 yt-ziliao 桥接（`references/yt-ziliao-bridge.md`）补采六章资料包；状态迁 `阶段二：资料研究`。补采失败 → 报缺失清单并**终止**，不硬跑。
 
 ### 阶段 3/7：机评与 C 闸门

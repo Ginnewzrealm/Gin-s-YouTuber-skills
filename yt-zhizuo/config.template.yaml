@@ -1,14 +1,10 @@
 # yt-zhizuo 配置模板（复制为 config.yaml 并填值；config.yaml 已 gitignore 不入库）
+# 2026-09-10 存储重构收敛：删 doc.folder_token/paths.output_dir——
+# 本地=技能内 workspace/<编号>/，飞书目标=core 共享配置 feishu_root_folder_token + <编号> <标题>/
 
 pool:
   base_token: ""        # 必填：选题表 base token（从飞书链接解析，原样全文禁缩写）
   table_id: ""          # 必填：选题表 ID（tbl 前缀）
-
-doc:
-  folder_token: ""      # 必填：飞书文档存放文件夹 token
-
-paths:
-  output_dir: "~/Documents/YouTuber工作流/制作四件套"   # 本地四件套存档根目录（core 共享配置为准时可读 core）
 
 channel:
   language: "zh"        # 产出语言：zh / en / both

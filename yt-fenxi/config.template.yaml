@@ -1,12 +1,11 @@
 # yt-fenxi 配置模板
 # 复制为 config.yaml 后由初始化问答填充（config.yaml 已被 gitignore，含个人 token 不入库）
+# 2026-09-10 存储重构收敛：分析卡路径=技能内 workspace/<编号>/（无需配置）；
+# 飞书目标文件夹=core 共享配置 feishu_root_folder_token（本文件不存）。
 
 pool:
   base_token: ""      # 必填：飞书多维表格 token（选题池所在 base）
   table_id: ""        # 必填：选题表 ID（tbl 前缀）
-
-cards:
-  output_dir: "~/Documents/YouTuber工作流/选题分析卡"   # 分析卡存放目录（可改）
 
 state_options:                    # 必须与飞书表「选题状态」选项名保持一致
   entry: ["阶段一：想法记录", "想法记录"]  # 入口态（老新两版都认）

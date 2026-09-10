@@ -158,7 +158,7 @@ MM:SS-MM:SS  【听觉】口语化短句推进剧情（每句 <20 字）；自�
 ## Part 5 待用户决策项
 ```
 
-本地：`paths.output_dir/<选题编号>-v<版本>-A.md` 与 `<选题编号>-v<版本>-B.md`（B 含完整交付物头）。
+本地主档：本技能 `workspace/<编号>/script-A.md` 与 `script-B.md`（B 含完整交付物头）；交付时合并推飞书 `03-脚本.md`（+create/+overwrite）。
 
 ---
 
