@@ -29,6 +29,11 @@
 > 形态三选一：露脸（开场/关键段实拍）｜B-Roll（素材库画面）｜AI（可灵/即梦生成）
 > 来源销号制：ziliao 报告内素材优先（标 §节/#号）；报告外标"自行获取+合法途径"；AI 生成标工具与 prompt
 > 扫描闸：每行须 形态合法/画面非空/来源非空；形态=AI 必带 prompt；形态=露脸必带机位/景别
+> 档案感处理（拆局片默认风格，v0.2 新增）：本频道"戏剧化尽调"视听语言 = Dark Mode 放大镜——
+> ①素材画面压暗融入深色底（参考封面规范 3+1 色彩，见 references/thumbnail-spec.md）；
+> ②关键信息高亮圈出（财报异动数字/判决书段落/订单号），圈出动作写进 Part 3 剪辑动作列；
+> ③金属/机械质感音效点位写进 Part 3 备注列（"档案开启"咔嚓声/盖章声/纸张摩擦声）。
+> 档案感是 B-Roll/AI 行的**画面处理规范**（形态值不变，扫描闸三选一不动）；AI 底图提示词的色彩/留白指令直接复用 thumbnail-spec.md 五段式法。
 
 | 段号 | 时间码 | 时长 | 形态 | 画面内容（客观描述，禁"气氛紧张"） | 素材来源 | AI 生成提示词（形态=AI 必填，含工具名） | 连续性约束（角色/服装/道具） |
 |---|---|---|---|---|---|---|---|
@@ -57,10 +62,14 @@
 
 | 阶段 | 覆盖时间码 | 情绪标签 | 检索关键词 | 候选曲目（检索后填写） | 音量/闪避规范 | 转场音效点位 |
 |---|---|---|---|---|---|---|
+| M0 尽调冷峻（档案开启） | 00:00-01:00 | Cold / Investigative / Minimal Pulse | cold investigative pulse；minimal dark documentary | 待填 | 低于配音 -16dB，几乎贴底 | 00:03 档案开启金属咔哒声；00:20 纸张摩擦/盖章声 |
 | M1 悬疑 Hook | 00:00-03:00 | Mysterious / Tension / Dark Synth | dark synth tension；mysterious pulse | 待填 | 低于配音 -12dB，配音进入闪避 -6dB | 00:45 重音音效 |
 | M2 中性铺陈 | 03:00-12:00 | Documentary / Minimal / Modern Piano | documentary minimal piano | 待填 | 低于配音 -15dB | — |
 | M3 冲突高潮 | 12:00-20:00 | Dramatic / Heavy Drums / Rising Tension | dramatic drums tension | 待填 | 低于配音 -10dB | 每段转场鼓点卡拍 |
 | M4 反思升华 | 20:00-24:00 | Emotional / Reflective / Slow Ambient | emotional ambient reflective | 待填 | 低于配音 -14dB | 结尾淡出 3 秒 |
+
+> M0 与 M1 重叠属正常：M0 是"档案开启"氛围垫底（拆局片冷峻基调），M1 悬疑张力从 M0 上叠加；
+> 纯情绪型选题（非拆局）可跳过 M0，四阶段照旧。
 
 ## Part 5 销号与扫描报告（机器产出，人审入口）
 

@@ -73,7 +73,7 @@ description: Use when 选题脚本已定稿（阶段四：内容制作），需�
 1. **配音 brief**：全文标注（//停顿/粗体重音/[情绪]/<Speed>）；WHY 提示给动机不给指令（吸收 voiceover-direction 底座）；露脸段注明"出镜=口播"；录音参数=分段 2-3 分钟+手机/领夹麦；修音=Adobe Podcast 免费档。
 2. **分镜+B-Roll 清单（段级 B 版）**：每段一行，五列刚性字段=形态/画面/来源/prompt/连续性。B-Roll 清单逐条销号（采用→落入某段；弃用→Part 5 记去向+原因）。AI 段写可灵/即梦中文 prompt；露脸段写机位/景别/服装道具连续性（吸收 agentara video-storyboard 规范）；B-Roll 段写素材库检索词（Pexels/Storyblocks 等，仅限 jiaoben 已标注"自行获取"项）。
 3. **剪辑 brief**：节奏断点（Hook 1.5-2.5s/展开 3-5s 视觉变化）+ 字幕（思源黑体 Heavy 白字黑边中下 1/3）+ 转场 + 导出参数（Mac 剪映：MP4 H.264 4K 30fps，-14 LUFS，峰值 -1 dBFS）。
-4. **配乐提示**：四阶段情绪板（悬疑 Hook/中性铺陈/冲突高潮/反思升华）+ YouTube Audio Library 英文检索词 + 音量闪避规范。曲库列留"待填"，订阅 Epidemic Sound 后仅换曲库不换结构。
+4. **配乐提示**：五阶段情绪板（尽调冷峻档案开启/悬疑 Hook/中性铺陈/冲突高潮/反思升华；拆局片默认带 M0，纯情绪型可跳）+ YouTube Audio Library 英文检索词 + 音量闪避规范。曲库列留"待填"，订阅 Epidemic Sound 后仅换曲库不换结构。
 
 ### 阶段 3：扫描闸
 
