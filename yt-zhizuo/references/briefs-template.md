@@ -2,6 +2,7 @@
 
 > 交付物 = **1 个飞书文档**，内部按 Part 1~5 分节；本地先落盘同内容 md 草稿，
 > 跑 `python3 scripts/scan_briefs.py <草稿.md>` exit 0 后才创建飞书文档。
+> 交付：本地稿=本技能 `workspace/<编号>/briefs.md` → `markdown +create/overwrite` 推飞书 `<编号> <标题>/04-制作四件套.md`；
 > 回填：文档 URL 写入选题表「制作四件套」字段（text 类型，裸字符串）。
 > 全文时间码统一 `MM:SS-MM:SS`，与 yt-jiaoben B 稿段落一一对应。
 

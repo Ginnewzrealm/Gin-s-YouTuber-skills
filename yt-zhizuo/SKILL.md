@@ -7,7 +7,7 @@ description: Use when 选题脚本已定稿（阶段四：内容制作），需�
 
 ## 概述
 
-对**已定稿脚本**做制作前翻译：消费 yt-jiaoben 的 B 稿（听觉轨/视觉轨/控制轨/B-Roll 清单）→ 一次出齐四件施工指令 → 扫描闸过检 → 飞书单文档交付 → 回填选题表「制作四件套」字段。
+对**已定稿脚本**做制作前翻译：消费 yt-jiaoben 的 B 稿（听觉轨/视觉轨/控制轨/B-Roll 清单）→ 一次出齐四件施工指令 → 扫描闸过检 → 推飞书 04-制作四件套.md（原生 .md）→ 回填选题表「制作四件套」字段。
 
 核心原则：
 
@@ -53,7 +53,7 @@ description: Use when 选题脚本已定稿（阶段四：内容制作），需�
 阶段 3/4：扫描闸 [自动]
 - [ ] Step 5 scan_briefs.py（四件齐/有源/时间码连续/形态专项） [自动]
 阶段 4/4：交付 [自动]
-- [ ] Step 6 飞书文档（五节结构）+ 回填「制作四件套」字段 + 本地存档 [自动]
+- [ ] Step 6 推飞书 04-制作四件套.md（五节结构，markdown +create/overwrite）+ 回填「制作四件套」字段 + workspace 本地存档 [自动]
 ```
 
 **阻塞提示**：无硬闸门；Step 5 不过即回阶段 2 对应 Step 修正。
@@ -62,9 +62,9 @@ description: Use when 选题脚本已定稿（阶段四：内容制作），需�
 
 ### 阶段 1：输入校验
 
-读 config.yaml（缺失→从 config.template.yaml 复制走初始化问答：池 token/文档文件夹/输出目录）。校验输入：
+读 config.yaml（缺失→从 config.template.yaml 复制走初始化问答：池 token）。飞书目标文件夹=core 共享配置 `feishu_root_folder_token` + `<编号> <标题>/`。运行时先清本技能 workspace 下非当前编号目录。校验输入：
 - yt-jiaoben 定稿 B 稿（含 B-Roll 清单）存在；缺失 → 报回 yt-jiaoben，**终止不硬跑**
-- 输出目录 = core 共享配置 `dirs.briefs`（默认 `~/Documents/YouTuber工作流/制作四件套/<编号>/`）
+- 输出目录 = 本技能 `workspace/<编号>/`（主档，三档自清见 core 数据契约）
 
 ### 阶段 2：四件生产
 
@@ -81,8 +81,8 @@ description: Use when 选题脚本已定稿（阶段四：内容制作），需�
 
 ### 阶段 4：交付
 
-- 本地草稿存 `<输出目录>/<编号>-v<版本>.md`
-- 飞书文档：按模板五节（Part 1~5）创建，标题白名单清洗（禁 `/\:*?"<>|`），存入 config `doc.folder_token`；创建后拿 URL
+- 本地草稿存本技能 `workspace/<编号>/briefs.md`（文件名固定，版本历史由飞书 +version-history 承担）
+- 飞书：`markdown +create` 推 `04-制作四件套.md` 至 `<编号> <标题>/`（文件夹不存在则经 lark-drive 先建）；修订 `+overwrite`，URL 不变
 - 回填：选题表「制作四件套」字段=文档 URL（**先 `+field-list` 查字段类型**，text 类型收裸字符串；字段不存在则报人建字段）
 - 汇报：四件各一行摘要 + 扫描结果 + B-Roll 销号统计 + 下一步（人做片 → agrici metadata 出上传包）
 
