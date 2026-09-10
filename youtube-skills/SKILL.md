@@ -114,3 +114,23 @@ python3 scripts/yt_core.py route --state "<池状态>" \
 | 把本地路径写进表格字段 | 字段只存飞书 URL 或人读摘要；本地路径机器自己算（编号为主键），写进表是无效信息 |
 | 跨技能直接读对方 workspace | 一律经飞书 .md `+fetch` 中转；工作区不跨技能读 |
 | 人没过硬闸门就推进下一阶段 | 只标注闸门位置，等人明确拍板（指南误区 3） |
+
+### lark-cli 已验证命令序列（2026-09-10 实战沉淀，别再试错）
+
+```bash
+# Markdown 文件（--file 必须当前目录相对路径，先 cd 到文件所在目录）
+lark-cli markdown +create --file 01-资料报告.md --folder <folder_token>
+lark-cli markdown +fetch --file <file_token>          # 拉回本地
+lark-cli markdown +overwrite --file <file_token> --content-file 01b-资料清单.md
+
+# 多维表格（--json 必须 ./相对路径，/tmp 绝对路径会被拒）
+lark-cli base +record-search --base <token> --table <tbl_id> --keyword "脑白金"
+lark-cli base +record-batch-create --base <token> --table <tbl_id> --json @./payload.json
+lark-cli base +record-batch-update --base <token> --table <tbl_id> --json @./payload.json
+lark-cli base +field-list --base <token> --table <tbl_id>
+
+# 字段类型坑（实战踩过）
+# text 字段：URL 回填用裸字符串，不是 {"link":...} 对象
+# url 字段：同理裸字符串；select 字段：值=["选项名"] 数组
+# field-update 是 PUT 全量语义；ndjson 输出是 manifest，真实数据在 record_file 指针里
+```

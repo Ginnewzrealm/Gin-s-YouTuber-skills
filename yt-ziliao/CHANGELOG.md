@@ -13,3 +13,10 @@
 - **新增 `config.template.yaml`**：`webai_collection: true|false` 开关（默认 true，改 false 即永久回退）
 - **下游契约不变**：materials.json schema、score_materials.py、六阶段编排、飞书交付物全不动；条目仅多可选 `collection_route: "webai"` 溯源字段
 - 外部依赖：AgentChat（`~/.agents/skills/agentchat`）+ 专用 Chrome CDP 9222 + 三家登录态
+
+### v2.9.1 — 评分 bug 修复 + TOC 生成器 + 粗采层视频线索（优化轮）
+
+- **score_materials.py 修复**：stance 前缀归一（"质疑方(括注)"不再被丢弃，D4 从 0→60）；language 别名归一 + D2 公式改"主语言 60 基础 + 次语言加成"（中文选题不再恒 0，D2 0→62.9）；platform 别名 + URL 域名兜底（D1 20→100）。脑白金 35 条回归：overall 46.8→75.8，评分首次真实反映数据质量
+- **新增 scripts/generate_toc.py**：推送飞书前自动生成目录区块（<!-- TOC --> 标记，幂等可重复跑），解决飞书 .md 无大纲问题
+- **粗采层增强**：新增子任务④视频线索（千问/Kimi 出"节目名+年份"，B 站 API 按图索骥）
+- **双源制制度化**：步骤 6 标注节明文硬规则——数字/引语双源印证，单源降档，无源 rejected

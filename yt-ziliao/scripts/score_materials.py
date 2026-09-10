@@ -60,29 +60,59 @@ AUTHORITY_SCORE = {"高": 100, "中": 70, "低": 40}
 VERIFICATION_SCORE = {"多方证实": 100, "单一来源": 60, "存疑待核实": 30, "存疑": 30}
 # 立场集合
 STANCES = {"支持方", "质疑方", "中立"}
+# 立场别名归一：materials 里常见"质疑方(财经作家反思视角)"这类带括注的值，
+# 前缀匹配即可归类（v2.9.1 修复 D4=0 的真正根因：带括注值被 STANCES 精确匹配丢弃）
+def normalize_stance(value: str) -> str:
+    v = (value or "").strip()
+    for s in STANCES:
+        if v.startswith(s):
+            return s
+    return "中立"
+
+# 语言别名归一（v2.9.1）："中文/汉语/Chinese"→zh，"英文/英语/English"→en
+LANGUAGE_ALIASES = {
+    "zh": "zh", "中文": "zh", "汉语": "zh", "chinese": "zh", "zh-cn": "zh", "zh-tw": "zh", "繁体": "zh",
+    "en": "en", "英文": "en", "英语": "en", "english": "en",
+}
+def normalize_language(value: str) -> str:
+    return LANGUAGE_ALIASES.get((value or "").strip().lower(), (value or "").strip().lower())
+
 # 平台类型映射（用于 D1 平台覆盖）
 PLATFORM_CATEGORIES = {
-    "微博": "social",
-    "知乎": "qa",
-    "百度": "search",
-    "36氪": "news",
-    "贴吧": "forum",
-    "豆瓣": "forum",
-    "BBC": "news",
-    "NYT": "news",
-    "Reddit": "forum",
-    "Hacker News": "forum",
-    "Medium": "blog",
-    "arXiv": "academic",
-    "Google Scholar": "academic",
-    "政府公告": "official",
-    "公司官网": "official",
-    "B站": "video",
-    "YouTube": "video",
-    "公众号": "social",
-    "抖音": "video",
+    "微博": "social", "weibo": "social",
+    "知乎": "qa", "zhihu": "qa",
+    "百度": "search", "baidu": "search",
+    "36氪": "news", "36kr": "news",
+    "贴吧": "forum", "豆瓣": "forum",
+    "BBC": "news", "NYT": "news", "Reddit": "forum", "Hacker News": "forum",
+    "Medium": "blog", "arXiv": "academic", "Google Scholar": "academic",
+    "政府公告": "official", "公司官网": "official",
+    "B站": "video", "bilibili": "video", "哔哩哔哩": "video",
+    "YouTube": "video", "youtube": "video",
+    "公众号": "social", "抖音": "video", "douyin": "video",
     "行业报告": "report",
 }
+# 平台兜底：URL 域名启发（v2.9.1）：platform 字段不在表内时按 URL 归类
+PLATFORM_DOMAIN_HINTS = [
+    ("bilibili.com", "video"), ("youtube.com", "video"), ("youtu.be", "video"),
+    ("weibo.com", "social"), ("zhihu.com", "qa"), ("twitter.com", "social"),
+    ("x.com", "social"), ("reddit.com", "forum"), ("medium.com", "blog"),
+    ("arxiv.org", "academic"), ("scholar.google", "academic"),
+    ("gov.cn", "official"), ("gov.", "official"),
+    ("people.com.cn", "news"), ("news.cn", "news"), ("xinhuanet.com", "news"),
+    ("caixin.com", "news"), ("eeo.com.cn", "news"), ("gmw.cn", "news"),
+    ("sina.com.cn", "news"), ("sohu.com", "news"), ("qq.com", "news"),
+    ("163.com", "news"), ("ifeng.com", "news"), ("ce.cn", "news"),
+]
+def platform_category(item: dict) -> str:
+    platform = (item.get("platform") or "").strip()
+    if platform in PLATFORM_CATEGORIES:
+        return PLATFORM_CATEGORIES[platform]
+    url = (item.get("url") or "").lower()
+    for domain, cat in PLATFORM_DOMAIN_HINTS:
+        if domain in url:
+            return cat
+    return "other"
 
 
 def load_materials(path: str) -> dict[str, Any]:
@@ -119,23 +149,30 @@ def credibility_score(item: dict) -> float:
 
 
 def compute_d1_platform_coverage(items: list[dict]) -> float:
-    """D1 平台覆盖 = 有素材的平台类型数 ÷ 5 × 100"""
+    """D1 平台覆盖 = 有素材的平台类型数 ÷ 5 × 100（含 platform 别名与 URL 域名兜底）"""
     categories = set()
     for item in items:
-        platform = item.get("platform", "")
-        cat = PLATFORM_CATEGORIES.get(platform, "other")
-        categories.add(cat)
+        categories.add(platform_category(item))
     return min(len(categories) / 5 * 100, 100)
 
 
 def compute_d2_language_coverage(items: list[dict]) -> float:
-    """D2 语言覆盖 = min(zh%, en%) - |zh%-en%|×0.3"""
+    """D2 语言覆盖（v2.9.1 修正）：先归一语言别名，再按"主语言基础分 + 次语言加成"计。
+
+    旧公式 min(zh,en)-|zh-en|*0.3 对中文母语选题（天然 zh 占绝对多数）恒判 0 分，
+    与"语言覆盖"的语义不符。新公式：主语言占比≥60% 得 60 基础分（保证单语选题不冤死），
+    次语言占比×100 为加成，封顶 100——鼓励双语但仍给纯中文选题合理分。
+    """
     if not items:
         return 0.0
     total = len(items)
-    zh = sum(1 for i in items if i.get("language", "") == "zh") / total
-    en = sum(1 for i in items if i.get("language", "") == "en") / total
-    return max(0, min(zh, en) - abs(zh - en) * 0.3) * 100
+    counts = Counter(normalize_language(i.get("language", "")) for i in items)
+    counts.pop("", None)
+    if not counts:
+        return 0.0
+    top, second = counts.most_common(2)[0][1] / total, (counts.most_common(2)[1][1] / total if len(counts) > 1 else 0)
+    base = 60 if top >= 0.6 else top * 100
+    return min(base + second * 100, 100)
 
 
 def compute_d3_source_type(items: list[dict]) -> float:
@@ -145,8 +182,8 @@ def compute_d3_source_type(items: list[dict]) -> float:
 
 
 def compute_d4_stance_coverage(items: list[dict]) -> float:
-    """D4 立场覆盖 = min(支持, 质疑, 中立) ÷ 5 × 100"""
-    stance_counts = Counter(i.get("stance", "中立") for i in items if i.get("stance") in STANCES)
+    """D4 立场覆盖 = min(支持, 质疑, 中立) ÷ 5 × 100（stance 经前缀归一，带括注值不再被丢弃）"""
+    stance_counts = Counter(normalize_stance(i.get("stance", "中立")) for i in items)
     if len(stance_counts) < 3:
         return 0.0
     return min(stance_counts.values()) / 5 * 100

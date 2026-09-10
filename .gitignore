@@ -2,3 +2,8 @@ config.yaml
 runtime/
 __pycache__/
 .DS_Store
+
+# 运行时产物（2026-09-10 优化轮补全）
+feishu_auth_qr.png
+*.ndjson
+ai-image-*.png

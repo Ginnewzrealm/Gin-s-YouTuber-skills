@@ -104,6 +104,18 @@ focusing on critical/skeptical perspectives. Format per line:
 Fact | Source name | Verifiable URL (optional)
 ```
 
+**④ 视频线索**（千问/Kimi 带联网搜索——出"哪档节目哪一期"，B 站 API 按图索骥）
+
+```
+请联网搜索：关于《{选题名}》的{人物/事件}，有哪些视频采访/纪录片/电视节目？
+{通用结构}
+每条线索优先给出：节目名称 + 年份 + 平台 + 可核验页面 URL（B站优先给 BV 号页面）。
+这些线索将用于按图索骥检索视频，不需要给出视频直链本身。
+```
+
+视频线索复核方式不同：拿到"节目名+年份"后走 B 站搜索 API 验证 BV 号存在性，
+标记 `verify_status: "accepted_video_clue"`（区别于文字线索的 URL 复核）。
+
 ### 已知输出噪声（解析时剔除）
 
 - 思考过程/trace 文本（Kimi 常见，含"使用 N 个工具"等）
