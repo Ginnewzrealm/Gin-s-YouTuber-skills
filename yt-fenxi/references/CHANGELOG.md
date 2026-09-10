@@ -1,5 +1,23 @@
 # yt-fenxi 更新日志
 
+## 2026-09-10
+
+### vN6.0 批次 — 拆局价值评分轴改造（频道定位升级配套）
+
+> 背景：频道定位升级为"买方视角商业极境拆局纪录片"（方案见 ~/Downloads/YouTuber技能优化调整方案.md P0②）。
+> 原流量四维（Demand/Conflict/Outlier/Archive）评的是"这题有没有流量"，新定位要评的是"这题拆不拆得开"。
+> **性质：文本层调整——脚本（scan_unsourced/audit_consumption/preflight）零改动，N5 三分/消费对账闸/N8 硬闸门/N9 收货单结构不动。**
+
+| 变更 | 说明 | 文件 |
+|------|------|------|
+| 评分轴更换 | N3 主评分轴 = 拆局价值四维：非共识30/齿轮可还原30/决策考古25/关卡流15，锚点表落 scoring-anchors §一；原流量四维降参考层（仍评估附卡，不进总分不进闸门）；重档/轻档机制保留（参考层调 API，主评分轴按资料包打） | scoring-anchors.md / SKILL.md / analysis-card-template.md |
+| C 闸门①改造 | "硬核信源≥2" → "三方对照可得"：创始人视角+至少一方反方视角（离职者/对手/投资人）有实料 | scoring-anchors.md §二 / SKILL.md / 卡模板 §三 |
+| C 闸门④新增 | 空方压力测试：立项必产 Kill_Thesis 草案（3 年内市值蒸发 50% 的单点崩溃原因），触发条件+崩溃路径+空方证据来源齐全才通过；空泛质疑不通过。推导只到草案级（ziliao 维度五 a 供料，五 b 推导落此） | scoring-anchors.md §二 / SKILL.md / 卡模板 §三 |
+| N6 第 5 维 | 切入瞬间穷举：消费 ziliao §5.4 锚点清单 → 三锚点（物件/数字/对话）补挖 → Nieman 4C 全过入候选 → 时机矩阵标注（Crisis/Pivot-MVP/Genesis/Peak，买方视角推荐 Pivot-MVP）→ N8 人审人选；候选<2 个 4C 通过不得交付 | scoring-anchors.md §4.4 / SKILL.md / 卡模板 §六 |
+| 常见错误 | 三行更新/新增：三方对照一票否决、Kill_Thesis 禁空泛、4C 不过不硬塞 | SKILL.md |
+
+---
+
 ## 2026-09-09
 
 ### vN5.6 批次 — 消费对账机械闸（防偷懒/防遗漏）+ 边界声明
