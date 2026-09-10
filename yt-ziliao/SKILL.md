@@ -366,13 +366,39 @@ Skill(skill="lark-base")    # 多维表格读写
 - 低权威+存疑 占比 0%（常态 ≤5%）
 - 降级原因写入报告头部元信息，供下游 yt-fenxi 判断原料质量
 
+### 步骤 4.7：网页 AI 粗采层（可选加速，默认启用）
+
+> 细则全文：[references/网页AI粗采层.md](references/网页AI粗采层.md)。本节是入口摘要。
+
+**定位**：侦察兵，只出线索，不产素材。通过 AgentChat 桥接免费网页 AI（DeepSeek/千问/Kimi 轮换），把"搜什么、去哪找、哪条值得读"外包出去，我方只精读已验证的少量页面——**ziliao 读网页 Token 预期省 60-75%**。
+
+**启用条件**（config `webai_collection: true` 且前置检查通过）：
+- AgentChat Chrome CDP 9222 可达
+- `--smoke` 至少一家 provider REACHABLE
+
+**不满足→静默跳过，回退纯 WebSearch 路线**，记入 `runtime/.runs/<topic>.json`。默认优先粗采层，降级使用纯 WebSearch——用户可配 `webai_collection: false` 永久关闭。
+
+**执行**（按粗采层文档的轮换协议）：
+1. 依选题维度生成 3 个子任务（中文事实/联网搜索/英文视角），轮转调度 provider
+2. 提示词强制三段式输出：`事实｜来源名称｜可核验URL`
+3. 产出 `raw/webai_clues.json`（含 provider 使用记录 + receipt 回执）
+
+**质量红线（不可妥协）**：
+- 无有效 URL 的线索**物理进不了** materials.json
+- URL curl 复核（HTTP 200 + 正文抽查）→ 通过者进精读队列
+- 数字/引语双源核验，单源降档，无源 rejected
+- 复核失败一律记 `rejected[]`（reason 必填），**零静默丢弃**
+- 立场/权威性由我方读原文后判断，不信网页 AI 自评
+
 ### 步骤 5：全网搜索
 
-4个子Agent并行，但**不直接操作浏览器**：
+4路子 Agent 并行，但**不直接操作浏览器**：
 - **中文新闻/社交媒体**：微博、知乎、百度、36氪等
 - **英文新闻/社交媒体**：BBC、NYT、Reddit、Hacker News等
 - **官方信息/深度来源**：官方公告、学术论文、行业报告
 - **视频平台**（仅复杂选题）：B站、YouTube
+
+**优先消费粗采层线索**：若步骤 4.7 产出了 `raw/webai_clues.json`，子 Agent 先按其中 `verify_status=accepted` 的 URL 精读正文，再针对缺口补搜（补搜部分照旧用 WebSearch/WebFetch）。粗采层未启用或无线索时，完全照旧执行。
 
 **商业拆局类选题（公司/人物/产品拆解）**：四路子 Agent 是"运输层"不变，检索内容按 [references/挖掘手册-v2.md](references/挖掘手册-v2.md) 的三层颗粒×五维信源×检索语法组织（人→维度一/四，产品→维度二，公司/关卡→维度三/五 a）；挖到的料仍按六章模板归位（归位映射见手册 §六）。手册五条约束条（禁定性词/标信源类型/锚定证据/五维封闭/归因纪律）全程生效。
 
