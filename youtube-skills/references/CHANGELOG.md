@@ -1,4 +1,14 @@
 # youtube-skills 更新日志
+## 2026-09-10
+
+### v0.3.0 — 存储与工作区重构：配置 schema v2 + 三层模型 + 清理检查点
+
+> 背景：规格 docs/superpowers/specs/2026-09-10-storage-workspace-design.md——交付物全部原生 .md 上飞书（唯一持久层），
+> 本地收敛为各技能内 workspace（机器流转），选题表=索引。
+> - 配置 schema v1→v2：`dirs.*`/`workspace_root` 全删，仅余 `feishu_root_folder_token` / `pool` / `workspace_ttl_days`（默认 30）
+> - 初始化问答：工作区根目录 → 飞书根文件夹（必填）+ TTL
+> - 新增清理检查点（每次 route/progress 执行）：已发布/已淘汰即清 + TTL 兜底 + 当期自清；根文件（频道词库.json）免清
+> - 数据契约改三层：飞书 .md 持久层 / 技能内 workspace / 池=索引；跨技能交接一律 +fetch 中转，工作区不跨技能读
 
 ## 2026-09-09
 

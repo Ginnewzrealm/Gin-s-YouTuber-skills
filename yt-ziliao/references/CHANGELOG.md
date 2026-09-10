@@ -1,4 +1,15 @@
 # yt-ziliao 更新日志
+---
+
+## 2026-09-10
+
+### v2.8.0 — 存储契约重构：交付改原生 .md 推送
+
+> 规格 docs/superpowers/specs/2026-09-10-storage-workspace-design.md。
+> - 步骤8 交付：lark-doc 建 docx → lark-markdown 推 `01-资料报告.md`（+create/+overwrite，URL 不变）；write-strategy 重写（删分块/四级降级，整文件上传+pending 兜底）
+> - manifest.json 走 `01b-资料清单.md` 中转（JSON 包代码块推飞书，fenxi +fetch 提取）；本地 `workspace/<编号>/manifest.json`
+> - 删 `doc_folder` 问答；飞书目标文件夹=core 共享配置 feishu_root_folder_token + `<编号> <标题>/`
+> - 方法论文本零改动，扫描/评分脚本零改动（15/15 回归绿）
 
 ---
 

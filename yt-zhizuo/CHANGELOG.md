@@ -1,4 +1,10 @@
 # yt-zhizuo 更新日志
+## v0.2.0（2026-09-10）——存储契约重构：交付改 04-制作四件套.md 推送
+
+> 规格 docs/superpowers/specs/2026-09-10-storage-workspace-design.md。
+> - 交付：飞书 docx 单文档 → lark-markdown 推原生 `04-制作四件套.md`（+create/+overwrite，URL 不变；版本历史靠 drive +version-history）
+> - 输出目录：core `dirs.briefs` → 本技能 `workspace/<编号>/briefs.md`（文件名固定）；删文档文件夹问答，飞书目标=core feishu_root
+> - Part 2 宽表 9 列**不拆**（用户拍板）；四件内容/档案感/M0 配乐方法论零改动（11/11+模板自扫回归绿）
 
 ## v0.1.0（2026-09-09）——初版：制作四件套（TDD 全程：11 测试先行）
 
