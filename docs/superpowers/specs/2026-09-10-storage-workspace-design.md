@@ -28,7 +28,7 @@
 | 02 | 分析卡 | `02-分析卡.md` | `analysis-card.md` | 分析卡链接（URL） | yt-fenxi |
 | 03 | 脚本 | `03-脚本.md`（A/B 双稿同文档两节） | `script-A.md` / `script-B.md` | 选题脚本链接（URL） | yt-jiaoben |
 | 04 | 制作四件套 | `04-制作四件套.md` | `briefs.md` | 制作四件套（URL） | yt-zhizuo |
-| 05 | 关键词包 | 不建飞书文档 | `keywords.json` | 关键词包（**文字摘要**，格式见 §6） | yt-guanjianci |
+| 05 | 关键词包 | `05-关键词包.md`（JSON 原文包在代码块内） | `keywords.json` | 关键词包（**文字摘要**，格式见 §6） | yt-guanjianci |
 | 06 | 发布包装 | `06-发布包装.md` | `upload-pack.md` | 发布包装（URL） | yt-fabu（新建） |
 
 飞书动作统一为 `lark-cli markdown +create`（首交）/ `+overwrite`（修订，URL 不变）；归档后机器回读用 `markdown +fetch` 拿回原文。版本历史由 `drive +version-history` 承担。
@@ -81,9 +81,9 @@
 - Part 2 宽表**保持 9 列不拆**（用户拍板）
 
 ### yt-guanjianci
-- 单次包：`workspace/<编号>/keywords.json`（原 `关键词库/<词根>-keywords.json`）
+- 单次包：`workspace/<编号>/keywords.json`（原 `关键词库/<词根>-keywords.json`）；产包后同内容推飞书 `05-关键词包.md`（JSON 原文包在代码块内），供下游 `+fetch`
 - 频道词库：`workspace/频道词库.json`，**根文件免清**（唯一本地持久文件）
-- 新增回填：产包后向选题表「关键词包」字段写**文字摘要**（主关键词+候选标题 3-6 条+封面词+档位标注，多行文本），不建飞书文档
+- 新增回填：产包后向选题表「关键词包」字段写**文字摘要**（主关键词+候选标题 3-6 条+封面词+档位标注，多行文本）
 
 ### yt-fabu（新建，本规格为其输入）
 - 输入：guanjianci 关键词包 JSON + 人挑标题 + zhizuo Part3 章节时间码
@@ -120,6 +120,7 @@
 2. **docx 退路**：若某交付物将来需要飞书评论/协同，单独 `drive +import --type docx` 转真文档，其余保持 .md（混合合法）
 3. **fupan 读归档**：低频，`markdown +fetch` 拿回原文；若未来高频批量，再评估
 4. **频道词库 JSON**：机器读全部历史，放飞书表格无法结构化消费，故留本地免清
+5. **跨技能工作区禁读**：上家推飞书 .md → 下家 `+fetch` 拉回消费（含 keywords.json，经 `05-关键词包.md` 中转）——工作区不跨技能读，无例外
 
 ## 八、迁移与验收
 
