@@ -1,6 +1,6 @@
 # 选题分析卡模板
 
-> 文件名：`<选题编号>-<选题标题>.md`，存于 `config.yaml → cards.output_dir`（默认 `~/Documents/YouTuber工作流/选题分析卡/`）。
+> 本地主档：本技能 `workspace/<编号>/analysis-card.md`（唯一可编辑源）；同内容推飞书 `<编号> <标题>/02-分析卡.md`（`markdown +create/overwrite`，URL 不变；N9 回填「分析卡链接」）。版本演进只发生本地，飞书为同内容快照；改卡=改本地再重推，绝不在飞书文档直接改。
 > 文件头 YAML 记录状态机（中断恢复时读取），全文必须过 `scripts/scan_unsourced.py` 扫描。
 
 ```markdown
