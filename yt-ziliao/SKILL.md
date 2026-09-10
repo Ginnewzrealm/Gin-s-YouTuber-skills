@@ -42,6 +42,7 @@ yt-ziliao/
 ├── references/           # 静态参考文件（只读）
 │   ├── report-template.md
 │   ├── search-strategy.md
+│   ├── 挖掘手册-v2.md        # 商业拆局类选题专用：三层颗粒×五维信源×检索语法（v2.7.0）
 │   ├── write-strategy.md
 │   ├── feishu-table-rules.md
 │   ├── lark-field-formats.md
@@ -372,6 +373,8 @@ Skill(skill="lark-base")    # 多维表格读写
 - **官方信息/深度来源**：官方公告、学术论文、行业报告
 - **视频平台**（仅复杂选题）：B站、YouTube
 
+**商业拆局类选题（公司/人物/产品拆解）**：四路子 Agent 是"运输层"不变，检索内容按 [references/挖掘手册-v2.md](references/挖掘手册-v2.md) 的三层颗粒×五维信源×检索语法组织（人→维度一/四，产品→维度二，公司/关卡→维度三/五 a）；挖到的料仍按六章模板归位（归位映射见手册 §六）。手册五条约束条（禁定性词/标信源类型/锚定证据/五维封闭/归因纪律）全程生效。
+
 子 Agent 生成搜索词和候选 URL 后，主流程统一调用 OpenCLI 或 WebSearch/WebFetch 读取内容。
 
 视频 Agent 启动条件：
@@ -435,6 +438,7 @@ yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.
 | 涉及敏感主体（报告内标注） | N4 闸门② | 标雷区，供下游法律预审 |
 | 报告「历史沿革」类素材 | N6 ②历史脉络层 | 历史层角度的论据原料 |
 | **manifest.json**（v2.6 起，`build_manifest.py` 从定稿报告机械解析） | N2 就绪检查 + fenxi 消费对账 | 机器可读交接清单：materials[]（id/url/立场）/disputes[]/angles[]/audit。落盘路径=core 共享配置 `dirs.reports`；缺 manifest → fenxi 降级为"文档 URL 抽取"模式 |
+| 报告 §5.4 候选锚点清单（拆局类选题，v2.7.0 起） | fenxi N6 切入瞬间穷举 | 物件/数字/对话三锚点候选各≥1（或标暂缺+原因）；fenxi 做 4C 过滤与人选，本层只盘点不评估 |
 
 缺 `overall`/`D7`/报告 URL 任一项 = 交付未完工，yt-fenxi 有权按"资料未就绪"退回。
 
