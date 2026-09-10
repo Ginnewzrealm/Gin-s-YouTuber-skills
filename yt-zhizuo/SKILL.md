@@ -92,7 +92,7 @@ description: Use when 选题脚本已定稿（阶段四：内容制作），需�
 |---|---|
 | 输入 | yt-jiaoben 定稿 B 稿 + B-Roll 清单 + fenxi 敏感主体清单 |
 | 输出 | 飞书单文档（Part 1~5）+ 本地 md 存档 + 「制作四件套」字段回填（空则填不覆盖） |
-| 下游 | 人工执行（拍摄/剪辑）→ agrici `/youtube metadata` 消费：章节时间码（Part 3）+ 缩略图 brief（Part 2 关键帧+Part 1 钩子句） |
+| 下游 | 人工执行（拍摄/剪辑）→ agrici `/youtube metadata` 消费：章节时间码（Part 3）+ 缩略图 brief（Part 2 关键帧+Part 1 钩子句）；封面专项：视觉规范见 `references/thumbnail-spec.md`（3+1 色彩/死区/五段式 AI 提示词），封面词输入来自 yt-guanjianci `封面词` 字段 |
 | 不回写 | 选题状态本技能不动（制作中状态由人维护） |
 
 ## 依赖

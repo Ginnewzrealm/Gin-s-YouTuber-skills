@@ -33,6 +33,7 @@ def make_pack(source_grade="C"):
             {"候选": "为什么星宇一边扩招一边裁员？幕后真相", "公式": "悬念设问",
              "适用阶段": "冷启动", "钩子词": "为什么", "句式": "悬念设问", "实体词": "星宇"},
         ],
+        "封面词": ["裁员", "600人 清算"],
         "验证记录": [],
     }
 
@@ -74,6 +75,13 @@ class TestValidatePack(unittest.TestCase):
         self.assertFalse(r["passed"])
         self.assertTrue(any("标题" in e for e in r["errors"]))
 
+    def test_bad_cover_word_caught(self):
+        p = make_pack()
+        p["封面词"] = ["经过长期调查发现"]
+        r = kb.validate_pack(p)
+        self.assertFalse(r["passed"])
+        self.assertTrue(any("封面词" in e for e in r["errors"]))
+
     def test_schema_guard(self):
         p = make_pack()
         p["主关键词"] = {"词": "x"}  # 缺分级
@@ -86,6 +94,30 @@ class TestGradeMap(unittest.TestCase):
     def test_grade_notes(self):
         self.assertIn("DataForSEO", kb.GRADE_NOTES["A"])
         self.assertIn("手工", kb.GRADE_NOTES["C"])
+
+
+class TestCoverWords(unittest.TestCase):
+    def test_valid_cover_word(self):
+        self.assertTrue(kb.cover_word_ok("蒸发"))
+        self.assertTrue(kb.cover_word_ok("3万亿 蒸发"))
+        self.assertTrue(kb.cover_word_ok("清算"))
+
+    def test_too_long_caught(self):
+        self.assertFalse(kb.cover_word_ok("蒸发了三万亿"))
+        self.assertFalse(kb.cover_word_ok("一夜之间全部蒸发"))
+
+    def test_process_and_neutral_caught(self):
+        """三不选：过程/背景词与中性词硬拦。"""
+        self.assertFalse(kb.cover_word_ok("经过长期调查发现"))
+        self.assertFalse(kb.cover_word_ok("供应链整合"))
+
+    def test_full_sentence_caught(self):
+        """三不选：完整句子硬拦（含谓语连接）。"""
+        self.assertFalse(kb.cover_word_ok("这家公司亏掉了1000亿"))
+
+    def test_empty(self):
+        self.assertFalse(kb.cover_word_ok(""))
+        self.assertFalse(kb.cover_word_ok("  "))
 
 
 class TestMainCLI(unittest.TestCase):

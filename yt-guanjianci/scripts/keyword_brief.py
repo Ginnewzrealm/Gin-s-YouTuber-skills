@@ -28,6 +28,30 @@ TITLE_LEN = (8, 35)
 BANNED_PUNCT = (",", "，", "。", "!", "！", ";", "；")
 PLACEHOLDER_RE = re.compile(r"(\[.*?\])|(XX+)|(待填)|(TODO)", re.IGNORECASE)
 
+# ---- 封面词规范（来源：商业故事封面词提炼 SOP，2026-09 归档）----
+COVER_MAX_HANZI = 6          # 封面字 ≤6 汉字（数字/字母不占额）
+CJK_RE = re.compile(r"[一-鿿]")
+COVER_BANNED = (             # 三不选：过程/背景 + 中性专业术语
+    "经过", "长期", "调查", "背景", "历程", "发展",
+    "供应链", "资产负债", "毛利率", "营收", "整合", "同比", "环比",
+)
+COVER_PREDICATES = ("了", "的", "是", "在", "和", "与")  # 谓语连接词=句子嫌疑
+
+
+def cover_word_ok(word: str) -> bool:
+    """封面词机械规范：≤6 汉字 / 三不选（过程词·中性术语·完整句）。"""
+    t = (word or "").strip()
+    if not t:
+        return False
+    hanzi = len(CJK_RE.findall(t))
+    if hanzi == 0 or hanzi > COVER_MAX_HANZI:
+        return False
+    if any(b in t for b in COVER_BANNED):
+        return False
+    if hanzi >= 5 and any(p in t for p in COVER_PREDICATES):
+        return False  # 长且带谓语=完整句子
+    return True
+
 
 def title_ok(title: str) -> bool:
     """单条标题机械规范：长度 8-35 字 / 禁标点 / 无占位符。问号冒号放行（经验值研究支持）。"""
@@ -45,7 +69,7 @@ def title_ok(title: str) -> bool:
 def validate_pack(pack: dict) -> dict:
     errors: List[str] = []
     warnings: List[str] = []
-    stats = {"titles": 0, "grade": pack.get("数据源档位", "")}
+    stats = {"titles": 0, "grade": pack.get("数据源档位", ""), "cover_words": 0}
 
     # 闸1：词根非空
     if not pack.get("词根"):
@@ -87,6 +111,15 @@ def validate_pack(pack: dict) -> dict:
         if t.get("适用阶段") not in ("冷启动", "推荐期", "通用"):
             warnings.append(f"标题「{cand[:12]}…」适用阶段未标注（建议 冷启动/推荐期/通用）")
 
+    # 闸4：封面词（单独可输出的封面字）
+    covers = pack.get("封面词", [])
+    stats["cover_words"] = len(covers)
+    if not covers:
+        warnings.append("封面词为空（封面字无产出，缩略图叠字无原料）")
+    for w in covers:
+        if not cover_word_ok(w):
+            errors.append(f"封面词「{w}」未过规范（≤{COVER_MAX_HANZI}汉字/三不选：过程词·中性术语·完整句）")
+
     return {"passed": not errors, "errors": errors, "warnings": warnings, "stats": stats}
 
 
@@ -97,7 +130,7 @@ def main_argv(argv: list) -> int:
     with open(argv[1], encoding="utf-8") as f:
         pack = json.load(f)
     r = validate_pack(pack)
-    print(f"词根 {pack.get('词根','?')}｜档位 {r['stats']['grade']}｜标题 {r['stats']['titles']} 条")
+    print(f"词根 {pack.get('词根','?')}｜档位 {r['stats']['grade']}｜标题 {r['stats']['titles']} 条｜封面词 {r['stats']['cover_words']} 个")
     for w in r["warnings"]:
         print(f"⚠ {w}")
     if r["passed"]:
