@@ -41,3 +41,34 @@ node ~/.claude/skills/agentchat/skills/AgentChat-OneWeb/index.js --doctor  # CDP
 ## 五、provider 频率红线（防封）
 
 单家冷却 ≥60s、时上限 20、日上限 80——粗采层轮换调度自动遵守，手动调用别连刷。
+
+## 六、轮换池真实可用度（2026-09-10 美的空调链路实战确认）
+
+| Provider | 状态 | 备注 |
+|---|---|---|
+| DeepSeek | ✅ 主力 | 24-27 秒返回，质量稳 |
+| 千问 | ✅ 主力 | 14-181 秒，思考过程长但事实准 |
+| Kimi | ✅ 主力 | 联网搜索强（50+ 结果），但会下载大量图片产物需清理 |
+| MiniMax/MiMo | 🟡 备用 | smoke 通过但未深度使用 |
+| **豆包** | ❌ **本次会话adapter修复失败** | 见下方 |
+
+### 豆包修复记录（待下个会话专项处理）
+
+**症状**：adapter 的 `responseSelectors` 用 `[class*="message-list"] [class*="max-w"]`，但 `last()` 抓到了**页面背景其他 `class*="container-`/`max-w-`/`s-font-` 元素**（导航、侧栏、对话框底部智能体图片网格），输出全是图片和导航文字，无实际回复文本。
+
+**实测根因**（CDP 实地探测）：
+- "能"字真实所在：`div.container-enLQFx`（20 多层嵌套）
+- 路径上有 `DIV.message-list-zLoNs1`
+- 但页面背景有同样匹配 `class*="container-` 的元素（首页智能体卡片），`last()` 取错了
+
+**尝试过的修复（全部失败）**：
+1. v2：加 `:not([class*="header"])` 等排除 → 输出仍为图片
+2. v3：纯 `[class*="content-"]` → 输出仍为图片
+3. v4：锚定 `[class*="message-list"] [class*="container-"]` → 输出仍为图片
+
+**真实修复路径（待下个会话）**：
+- factory.js 的 `last()` 取最新回复——需加"找新出现的、文本含 prompt 的回复"逻辑（改 factory 是 GitHub 第三方代码，需谨慎）
+- 或者在 doubao.js 加 `waitForResponse` 事件钩子（CDP 底层，需 opencli-adapter-author 技能）
+- 或者彻底改用"豆包只发链接问题"路线（不指望回复文本，只问返回结构化 URL 的问题）
+
+**当前会话决定**：放弃豆包，三家（DeepSeek/千问/Kimi）已能支撑轮换池。下次会话专门开一个 CDP debug 窗口处理。
