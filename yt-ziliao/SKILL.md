@@ -8,7 +8,7 @@ description: |
   - 用户要求为某个事件/人物/产品梳理来龙去脉
   - 用户要求整理素材并生成结构化的资料报告
 
-  执行流程：读取选题表定位选题 → 全网多源搜索 → 资料筛选与可信度评分 → 按六章模板生成报告 → 写入飞书文档 → 将文档链接回填到表格「资料采集」列。
+  执行流程：读取选题表定位选题 → 全网多源搜索 → 资料筛选与可信度评分 → 按六章模板生成报告 → 推飞书 01-资料报告.md（原生 .md，lark-markdown）→ 将文档链接回填到表格「资料采集」列。
 
   关键判定：用户意图是**围绕一个主题做系统性资料调研并输出报告**，而不是保存单条 URL 或单个文件到本地。
 
@@ -179,7 +179,7 @@ python3 scripts/score_materials.py <materials.json>
 
 触发后并行加载：
 ```
-Skill(skill="lark-doc")     # 文档创建与写入
+Skill(skill="lark-markdown") # 原生 .md 推送（+create/+overwrite/+fetch）
 Skill(skill="lark-sheets")  # 电子表格读写
 Skill(skill="lark-base")    # 多维表格读写
 ```
@@ -193,7 +193,8 @@ Skill(skill="lark-base")    # 多维表格读写
 首次触发时确认：
 1. 选题表格（名称/链接/ID）→ 自动检测表格类型
 2. 字段映射：读取字段（默认：选题标题）→ 写入字段（默认：资料采集）
-3. 文档存放路径（必填，不能为空）
+
+飞书目标文件夹不再本技能问答——统一读 core 共享配置 `feishu_root_folder_token`（见「飞书目标文件夹」节）。
 
 配置保存到 `runtime/config.json`，后续存在且完整则直接复用。
 
@@ -203,9 +204,9 @@ Skill(skill="lark-base")    # 多维表格读写
 
 1. **配置 schema 版本**：检查 `config.json` 是否包含 `schema_version` 以及 `env_check`、`browser_profile`、`browser` 字段
    - 缺失任一字段 → 视为旧版配置，进入初始化补全流程
-2. **依赖技能可用性**：当前环境是否已安装 `lark-doc`、`lark-sheets`、`lark-base` 技能
-   - 可通过一次轻量级 `Skill(skill="lark-doc")` 调用的返回或错误判断
-   - 若不可用，提示用户：「本技能依赖 lark-doc / lark-sheets / lark-base，请先安装这三个技能」
+2. **依赖技能可用性**：当前环境是否已安装 `lark-markdown`、`lark-drive`、`lark-base` 技能
+   - 可通过一次轻量级 `Skill(skill="lark-markdown")` 调用的返回或错误判断
+   - 若不可用，提示用户：「本技能依赖 lark-markdown / lark-drive / lark-base，请先安装这三个技能」
 3. **运行时目录**：确认 `runtime/` 目录可读写（默认位于技能安装目录下）
    - 若环境限制无法写入，询问用户指定可写路径，保存到 `config.json` 的 `runtime_dir`
 4. **搜索与提取工具**：确认当前环境可用 `WebSearch` 和 `WebFetch` 工具
@@ -265,9 +266,9 @@ Skill(skill="lark-base")    # 多维表格读写
 
 每次读表前，比对 `config.json` 中的 `table_id`/`field_read`/`field_write` 与实时字段清单。若不一致，要求用户重新初始化。
 
-### 用户拒绝提供文档路径
+### 飞书目标文件夹
 
-若 `doc_folder` 为空且用户拒绝提供，干净退出，不保存不完整配置，不生成任何输出。
+飞书目标 = core 共享配置 `feishu_root_folder_token` + `<编号> <标题>/` 子文件夹（不存在则经 lark-drive 先建）。core 共享配置缺失 → 回 core 走初始化，本技能不自跑根目录问答；用户拒绝提供则干净退出，不保存不完整配置，不生成任何输出。
 
 ---
 
@@ -281,7 +282,7 @@ Skill(skill="lark-base")    # 多维表格读写
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-并行加载 lark-doc、lark-sheets、lark-base。
+并行加载 lark-markdown、lark-drive、lark-base。
 
 ### 步骤 2：选题名解析 + 关键词提炼
 
@@ -305,15 +306,15 @@ Skill(skill="lark-base")    # 多维表格读写
 
 ### 步骤 3：初始化检查 + Pending 检测
 
-1. 检查 `runtime/config.json`：
+1. 运行时先清本技能 `workspace/` 下**非当前选题编号**的目录（当期自清档；根文件不动）
+2. 检查 `runtime/config.json`：
    - 不存在 → 执行初始化
-   - 存在但 `doc_folder` 为空 → **强制要求用户确认文档存放路径**；拒绝则退出
-   - 存在但缺少 `schema_version`、`env_check`、`browser_profile` 或 `browser` 任一字段 → **视为旧版/不完整配置，重新执行初始化**，保留用户已确认的 table_id/field_read/field_write/doc_folder 等有效字段，仅补充缺失的默认配置并重新检测环境
+   - 存在但缺少 `schema_version`、`env_check`、`browser_profile` 或 `browser` 任一字段 → **视为旧版/不完整配置，重新执行初始化**，保留用户已确认的 table_id/field_read/field_write 等有效字段，仅补充缺失的默认配置并重新检测环境
    - 存在且完整 → 执行配置健康检查 → 继续
-2. 检查 `runtime/.runs/<topic>.json` — 存在则从 pending 步骤继续
-3. 检查 `runtime/.pending/<topic>.json` — 存在则询问用户是否恢复写入
-4. 检查 `runtime/.verification/<topic>.json` — 存在则恢复待核实清单
-5. 检查 `runtime/.paused/<topic>.json` — 存在则进入步骤 7.5 恢复流程（见步骤 7.5）
+3. 检查 `runtime/.runs/<topic>.json` — 存在则从 pending 步骤继续
+4. 检查 `runtime/.pending/<topic>.json` — 存在则询问用户是否恢复写入
+5. 检查 `runtime/.verification/<topic>.json` — 存在则恢复待核实清单
+6. 检查 `runtime/.paused/<topic>.json` — 存在则进入步骤 7.5 恢复流程（见步骤 7.5）
 
 ### 步骤 4：读表定位
 
@@ -328,7 +329,7 @@ Skill(skill="lark-base")    # 多维表格读写
 - **成功**：`📖 已定位选题 → 🔍 开始全网搜索...`
 - **未找到**：列出最接近的 2-3 个选题，询问用户
 - **表格不可用**：提示原因，询问是否跳过表格先执行
-  - 用户选择跳过 → 仍生成飞书文档，但不执行回填，完成汇报标注「⚠️ 未回填表格」
+  - 用户选择跳过 → 仍推飞书 .md，但不执行回填，完成汇报标注「⚠️ 未回填表格」
 
 ### 步骤 4.5：浏览器就位检查（OpenCLI 前置）
 
@@ -437,7 +438,7 @@ yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.
 | 报告 3.5「争议点原料清单」 | N5.5 核心争议点提炼 | 争议配对原料（双方主张+来源+可裁决性），fenxi 在此层选定本期主争议点 |
 | 涉及敏感主体（报告内标注） | N4 闸门② | 标雷区，供下游法律预审 |
 | 报告「历史沿革」类素材 | N6 ②历史脉络层 | 历史层角度的论据原料 |
-| **manifest.json**（v2.6 起，`build_manifest.py` 从定稿报告机械解析） | N2 就绪检查 + fenxi 消费对账 | 机器可读交接清单：materials[]（id/url/立场）/disputes[]/angles[]/audit。落盘路径=core 共享配置 `dirs.reports`；缺 manifest → fenxi 降级为"文档 URL 抽取"模式 |
+| **manifest.json**（v2.6 起，`build_manifest.py` 从定稿报告机械解析） | N2 就绪检查 + fenxi 消费对账 | 机器可读交接清单：materials[]（id/url/立场）/disputes[]/angles[]/audit。随 `01b-资料清单.md` 推飞书（manifest JSON 包在代码块内，fenxi `+fetch` 提取）；本地存 `workspace/<编号>/manifest.json`；缺 manifest → fenxi 降级为"文档 URL 抽取"模式 |
 | 报告 §5.4 候选锚点清单（拆局类选题，v2.7.0 起） | fenxi N6 切入瞬间穷举 | 物件/数字/对话三锚点候选各≥1（或标暂缺+原因）；fenxi 做 4C 过滤与人选，本层只盘点不评估 |
 
 缺 `overall`/`D7`/报告 URL 任一项 = 交付未完工，yt-fenxi 有权按"资料未就绪"退回。
@@ -448,12 +449,14 @@ yt-ziliao 的产物被 yt-fenxi 按以下映射消费，字段名以 `materials.
 
 **附录「拒收与跳过清单」从 score_materials.py 输出的 `audit` 块抄录**（A.1 rejected / A.2 skipped / A.3 unselected），不得凭记忆填写。
 
-**报告定稿后跑 `scripts/build_manifest.py`** 生成 manifest.json 并落盘到 core 共享配置（`~/.config/youtube-skills/config.json` → `dirs.reports`）：
+**报告定稿后跑 `scripts/build_manifest.py`** 生成 manifest.json 并落盘本技能工作区：
 
 ```bash
 python3 scripts/build_manifest.py <报告.md> --topic-id <编号> \
-    --report-url <飞书链接> [--score score输出.json] --out <dirs.reports>/<编号>-manifest.json
+    --report-url <飞书链接> [--score score输出.json] --out workspace/<编号>/manifest.json
 ```
+
+随后把 manifest.json 全文包进 Markdown 代码块，推飞书 `01b-资料清单.md`（与 `01-资料报告.md` 同文件夹，同 `markdown +create`）。
 
 manifest = 下游机器闸门的唯一交接物（素材 ID 集合供 audit_consumption.py 差集对账）；缺失 = 交付未完工。
 
@@ -466,7 +469,7 @@ manifest = 下游机器闸门的唯一交接物（素材 ID 集合供 audit_cons
 
 ### 步骤 7.5：自检（硬约束）
 
-**在写入飞书文档之前必须执行，且自检失败则阻断写入**：
+**在推送飞书 .md 之前必须执行，且自检失败则阻断推送**：
 
 1. 逐章扫描具体数字、人名、时间、机构名、金额
 2. 无来源链接的强制追加 `[待核实]`
@@ -474,7 +477,7 @@ manifest = 下游机器闸门的唯一交接物（素材 ID 集合供 audit_cons
 4. 将清单中**独特且必要**的质量检查项（搜索覆盖、资料质量、报告完整性、飞书输出、写作禁区）纳入自检范围
 
 **自检失败处理**：
-- 阻断写入飞书文档
+- 阻断推送飞书 .md
 - 询问用户：「自检发现N条待核实信息，是否继续写入？确认后强制写入，跳过待核实标注。」
 - 用户确认 → 强制写入，交付时附带待核实清单
 - 用户拒绝 → 暂停，保存状态到 `runtime/.paused/<topic>.json`，等用户补充信息后再继续
@@ -488,12 +491,12 @@ manifest = 下游机器闸门的唯一交接物（素材 ID 集合供 audit_cons
 
 ### 步骤 8：飞书文档输出
 
-见 [references/write-strategy.md](references/write-strategy.md)：
-- 通过 `Skill(skill="lark-doc")` 创建/写入文档
-- **创建前文档标题必须按 write-strategy.md §〇 白名单清洗**（长破折号/emoji 会触发 400 安全校验）
-- 分块策略（<30KB整体 / 30-50KB按章 / >50KB二次切分）
-- 超长段落增加段落内部切分兜底
-- 四级降级：write → append → table → pending
+经 `Skill(skill="lark-markdown")` 推送原生 `.md`（不直接调 lark-cli）：
+- 本地稿 = 本技能 `workspace/<编号>/report.md`（主档）
+- 首次交付：`markdown +create` 推 `01-资料报告.md` 至飞书根下 `<编号> <标题>/` 文件夹
+- 修订（核实性重采等）：`markdown +overwrite` 同路径覆盖，URL 不变
+- 文件名与文档标题过白名单清洗（write-strategy.md §〇，规则不变）
+- 失败重试一次后仍失败 → 写 `runtime/.pending/<topic>.json`，下次触发恢复
 
 ### 步骤 9：链接回填
 
@@ -510,7 +513,7 @@ manifest = 下游机器闸门的唯一交接物（素材 ID 集合供 audit_cons
 
 ```
 ✅ 资料汇总报告已完成
-📄 飞书文档：[选题名称] 资料汇总分析报告
+📄 飞书 .md：01-资料报告.md（<编号> <标题>/ 文件夹内）
 🔗 文档链接：https://....feishu.cn/docx/...
 📋 已更新选题清单「资料采集」字段
 🧾 manifest.json：<路径>（v2.6 起必交付）
