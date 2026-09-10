@@ -22,6 +22,7 @@
 import argparse
 import json
 import os
+import sys
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -171,6 +172,21 @@ def load_config(path: str = CONFIG_PATH) -> Optional[dict]:
         return json.load(f)
 
 
+def cmd_init(feishu_root: str, base_token: str, table_id: str,
+             path: str = CONFIG_PATH, yes: bool = False) -> dict:
+    """写盘默认配置。已存在且未显式 --yes 时拒绝覆盖（2026-09-10 防误覆盖事故）。"""
+    if os.path.exists(path) and not yes:
+        return {"error": "config_exists",
+                "message": "配置已存在，拒绝覆盖。确认重建请加 --yes（或先删除该文件）",
+                "config_path": path}
+    cfg = default_config()
+    cfg["feishu_root_folder_token"] = feishu_root
+    cfg["pool"]["base_token"] = base_token
+    cfg["pool"]["table_id"] = table_id
+    save_config(path, cfg)
+    return {"config_path": path, "config": cfg}
+
+
 # ---------- 子技能安装检测 ----------
 
 SKILL_SEARCH_DIRS = ["~/.agents/skills", "~/.claude/skills"]
@@ -201,6 +217,7 @@ def main() -> None:
     p_init.add_argument("--feishu-root", default="")
     p_init.add_argument("--base-token", default="")
     p_init.add_argument("--table-id", default="")
+    p_init.add_argument("--yes", action="store_true", help="确认覆盖已存在的配置")
 
     p_route = sub.add_parser("route", help="状态→路由建议（纯映射）")
     p_route.add_argument("--state", required=True)
@@ -215,12 +232,9 @@ def main() -> None:
     args = ap.parse_args()
 
     if args.cmd == "init":
-        cfg = default_config()
-        cfg["feishu_root_folder_token"] = args.feishu_root
-        cfg["pool"]["base_token"] = args.base_token
-        cfg["pool"]["table_id"] = args.table_id
-        save_config(CONFIG_PATH, cfg)
-        print(json.dumps({"config_path": CONFIG_PATH, "config": cfg}, ensure_ascii=False, indent=2))
+        result = cmd_init(args.feishu_root, args.base_token, args.table_id, yes=args.yes)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        sys.exit(1 if "error" in result else 0)
     elif args.cmd == "route":
         print(json.dumps(route_advice(args.state, args.has_materials, args.completeness),
                          ensure_ascii=False, indent=2))

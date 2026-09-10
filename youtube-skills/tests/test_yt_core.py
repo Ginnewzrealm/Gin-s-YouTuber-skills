@@ -119,6 +119,26 @@ class TestWorkspaceConfig(unittest.TestCase):
             self.assertIn("feishu_root_folder_token", cfg)
             self.assertIn("workspace_ttl_days", cfg)
 
+    def test_init_refuses_overwrite_without_yes(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "config.json")
+            cfg = yc.default_config()
+            cfg["feishu_root_folder_token"] = "original"
+            yc.save_config(p, cfg)
+            r = yc.cmd_init("new-token", "", "", path=p)
+            self.assertIn("error", r)
+            self.assertEqual(yc.load_config(p)["feishu_root_folder_token"], "original")
+
+    def test_init_overwrite_with_yes(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "config.json")
+            cfg = yc.default_config()
+            cfg["feishu_root_folder_token"] = "original"
+            yc.save_config(p, cfg)
+            r = yc.cmd_init("new-token", "", "", path=p, yes=True)
+            self.assertNotIn("error", r)
+            self.assertEqual(yc.load_config(p)["feishu_root_folder_token"], "new-token")
+
 
 if __name__ == "__main__":
     unittest.main()
