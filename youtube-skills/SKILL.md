@@ -52,8 +52,9 @@ description: |
 读 `~/.config/youtube-skills/config.json`（脚本：`python3 scripts/yt_core.py` 子命令）：
 
 - 不存在 → 走**初始化问答**（一次问一轮，带回车默认）：
-  1. 工作区根目录？→ 默认 `~/Documents/YouTuber工作流`
+  1. 飞书根文件夹？→ 云盘文件夹 token 或链接（各选题交付物以原生 .md 存入其下 `<编号> <标题>/` 子文件夹）→ 必填
   2. 选题池链接（解析 base_token + table_id）？→ 可回车跳过（空则路由时现场问或读 yt-fenxi config.yaml）
+  3. 工作区 TTL？→ 默认 30（天，workspace 目录超期未动即清）
 - 存在 → 继续；并跑 `skills` 子命令展示子技能安装状态表
 
 ### 步骤 2：意图识别与定位
@@ -75,6 +76,13 @@ python3 scripts/yt_core.py route --state "<池状态>" \
 
 调用子技能时按对应桥接文件传参（`references/yt-*-bridge.md`）；子技能开工即切换为其 micro-checklist，core 的宏观仪表盘在**下一次阶段跳转**时再渲染。
 
+### 清理检查点（每次 route/progress 时顺手执行）
+
+遍历各技能 `workspace/<编号>/` 目录，命中任一即删除并打印一行日志（"清理 T-XXXX-XXX 工作区（依据：已发布）"）：
+- 选题状态 = 已发布 / 已淘汰 → 立即清
+- 目录 mtime 超 `workspace_ttl_days` → 清
+- 删除范围只含 `<编号>/` 子目录；`yt-guanjianci/workspace/频道词库.json` 等根文件永不删
+
 ### 会话恢复
 
 中断后用户回来 → 重新执行步骤 2-3（读池取最新状态，不凭对话记忆）→ 先输出完整宏观仪表盘，再继续。
@@ -83,10 +91,11 @@ python3 scripts/yt_core.py route --state "<池状态>" \
 
 | 项 | 约定 |
 |---|---|
-| 共享配置 | `~/.config/youtube-skills/config.json`（schema 由 `yt_core.py default_config` 定义；子技能**只读**） |
-| 工作区子目录 | `资料报告/`（ziliao 报告+manifest）· `选题分析卡/`（fenxi 卡）· `脚本/`（jiaoben） |
+| 共享配置 | `~/.config/youtube-skills/config.json`（schema 由 `yt_core.py default_config` 定义；子技能**只读**）。仅三项：`feishu_root_folder_token` / `pool` / `workspace_ttl_days`——无任何本地目录项 |
+| 持久层 | 飞书云盘原生 `.md`（`markdown +create/overwrite`）；飞书 `<编号> <标题>/` 文件夹永不删，版本历史 `drive +version-history` |
+| 本地工作区 | 各技能内 `<技能>/workspace/<编号>/`，机器流转专用；子技能运行时自清非当前编号目录（当期自清档） |
 | 选题池 | 状态机主表，经 lark-base 桥接读写；core 只读状态/资料字段，**不迁移状态**（迁移归子技能 N9 与人） |
-| 子技能交接 | ziliao 交付 = 飞书文档 + manifest.json（v2.6 起）；core 不中介产物内容，只确认产物存在性 |
+| 子技能交接 | 上家推飞书 .md → 下家 `markdown +fetch` 拉回消费（含 keywords.json 经 `05-关键词包.md`、manifest 经 `01b-资料清单.md` 中转）；**工作区不跨技能读**；core 不中介产物内容，只确认产物存在性 |
 
 ## 依赖
 
@@ -102,5 +111,6 @@ python3 scripts/yt_core.py route --state "<池状态>" \
 | 用户说"分析这个选题"，core 自己动手分析 | core 只定位+路由；分析是 yt-fenxi 的活，按桥接文件转交 |
 | 把「阶段三：确认选题」路由回 yt-fenxi | 该状态=已过 N8 人审，路由到 yt-jiaoben（状态机语义表） |
 | 一次渲染宏观+微观全套 | core 只渲染宏观；micro 归子技能（指南误区 1） |
-| 工作区路径写死在技能文件里 | 一律读共享配置；配置缺失先初始化，不猜默认 |
+| 把本地路径写进表格字段 | 字段只存飞书 URL 或人读摘要；本地路径机器自己算（编号为主键），写进表是无效信息 |
+| 跨技能直接读对方 workspace | 一律经飞书 .md `+fetch` 中转；工作区不跨技能读 |
 | 人没过硬闸门就推进下一阶段 | 只标注闸门位置，等人明确拍板（指南误区 3） |
