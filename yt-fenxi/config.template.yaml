@@ -8,7 +8,7 @@ pool:
   table_id: ""        # 必填：选题表 ID（tbl 前缀）
 
 state_options:                    # 必须与飞书表「选题状态」选项名保持一致
-  entry: ["阶段一：想法记录", "想法记录"]  # 入口态（老新两版都认）
+  entry: "阶段一：想法记录"      # 入口态（2026-09-10 旧名「想法记录」已迁移 82 条并删选项）
   researching: "阶段二：资料研究"
   confirmed: "阶段三：确认选题"
   eliminated: "已淘汰"
