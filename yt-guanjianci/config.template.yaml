@@ -1,0 +1,16 @@
+# yt-guanjianci 配置模板（复制为 config.yaml 并填值；config.yaml 已 gitignore 不入库）
+
+# 数据源档位：A=DataForSEO 精确值（付费，需 key）/ B=Google Trends 相对指数（免费）
+#             C=手工竞品扫描定性（默认，零依赖，须人复核）
+data_source:
+  grade: "C"                # A / B / C
+  dataforseo_key: ""        # A 档必填
+  trends_benchmark: ""      # B 档必填：对标基准词（如"英伟达"）
+
+# YouTube Data API（竞品批量抓播放量用；未注册则留空走手工贴数）
+youtube_api:
+  api_key: ""               # 开通了填；quota 组合拳见 references/reverse-engineering.md
+  enabled: false
+
+paths:
+  output_dir: "~/Documents/YouTuber工作流/关键词库"

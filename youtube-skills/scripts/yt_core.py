@@ -4,7 +4,7 @@
 子命令：
     init      初始化问答：工作区路径（+选题池链接可跳过）→ 落盘共享配置
     route     路由建议：传池状态 → 输出该调用的子技能（纯映射，不读池）
-    progress  渲染宏观七阶段仪表盘
+    progress  渲染宏观八阶段仪表盘
     skills    检测 yt-* 子技能安装状态
 
 设计红线（违反即返工）：
@@ -27,7 +27,7 @@ from typing import Optional
 
 CONFIG_PATH = os.path.expanduser("~/.config/youtube-skills/config.json")
 
-# ---------- 宏观七阶段（硬闸门=状态迁移点上的人审；阶段3无独立池状态，寄生于阶段二就绪态） ----------
+# ---------- 宏观八阶段（硬闸门=状态迁移点上的人审；阶段3无独立池状态，寄生于阶段二就绪态） ----------
 
 PHASES = [
     {"num": 1, "name": "选题立项", "skill": "人（硬闸门①立项）", "gate": "硬闸门①：人立项",
@@ -46,7 +46,11 @@ PHASES = [
      "states": ["待发布"],
      "note": "人做完全片迁「待发布」；agrici 出上传包（标题变体/描述/标签/章节/缩略图 brief）→ 人上传"},
     {"num": 7, "name": "数据复盘", "skill": "fupan [待开工]（唯一逆流：写回选题池）", "gate": None,
-     "states": ["已发布"]},
+     "states": ["已发布"],
+     "note": "发布后 0-14 天冷启动观察；顺手刷新关键词库（30天保鲜挂这里）"},
+    {"num": 8, "name": "推荐期优化", "skill": "yt-guanjianci", "gate": None,
+     "states": ["推荐期"],
+     "note": "冷启动后调 yt-guanjianci 换高情绪标题（公式一/三）→ 人挑 → 后台更换（≤2 次）→ fupan 复复盘"},
 ]
 
 TERMINAL_ELIMINATED = "已淘汰"
@@ -66,6 +70,8 @@ def _phase_num_of(state: str) -> int:
         return 6
     if state == "已发布":
         return 7
+    if state == "推荐期":
+        return 8
     return 0
 
 
@@ -79,7 +85,10 @@ def route_advice(state: str, has_materials: bool, completeness: int) -> dict:
                 "next_action": "无下一步；如需重开，人改回阶段一后重新走链"}
     if state == "已发布":
         return {"state": state, "skill": "fupan [待开工]",
-                "next_action": "等 fupan 技能建成后接数据复盘；当前人工看 Studio 数据"}
+                "next_action": "冷启动期（0-14天）：fupan 看留存/CTR+顺手刷新关键词库；14天后或搜索破2000播放→人迁「推荐期」"}
+    if state == "推荐期":
+        return {"state": state, "skill": "yt-guanjianci",
+                "next_action": "调 yt-guanjianci 按公式一/三重产≥3条高情绪标题→人挑→后台更换（≤2次）→ fupan 复复盘后闭环"}
     if state in ("阶段一：想法记录", "想法记录"):
         return {"state": state, "skill": "人（硬闸门①立项）",
                 "next_action": "等人立项拍板；立项后状态迁阶段二并调 yt-ziliao"}
@@ -107,7 +116,7 @@ def route_advice(state: str, has_materials: bool, completeness: int) -> dict:
 
 
 def render_macro(state: str) -> str:
-    """宏观七阶段仪表盘（指南 §10.2 格式；core 每轮渲染，子技能不重复宏观）。"""
+    """宏观八阶段仪表盘（指南 §10.2 格式；core 每轮渲染，子技能不重复宏观）。"""
     if state == TERMINAL_ELIMINATED:
         return "🎬 YouTuber 工作流进度\n\n该选题已淘汰（终态，仅档案）。如需重开：人改回阶段一 → 重新走链。"
 
@@ -116,16 +125,16 @@ def render_macro(state: str) -> str:
     lines = ["🎬 YouTuber 工作流进度", ""]
     for ph in PHASES:
         if ph["num"] < current_num:
-            lines.append(f"阶段 {ph['num']}/7：{ph['name']} [✓]")
+            lines.append(f"阶段 {ph['num']}/8：{ph['name']} [✓]")
         elif ph["num"] == current_num:
             gate = f"　← {ph['gate']}" if ph["gate"] else ""
-            lines.append(f"阶段 {ph['num']}/7：{ph['name']}　【当前：池状态={state}】{gate}")
+            lines.append(f"阶段 {ph['num']}/8：{ph['name']}　【当前：池状态={state}】{gate}")
             if ph.get("note"):
                 lines.append(f"　ℹ {ph['note']}")
             lines.append(f"　→ 该调：{ph['skill']}")
         else:
             pending = "[待开工]" if ("[待开工]" in ph["skill"] or not ph["states"]) else "[待开始]"
-            lines.append(f"阶段 {ph['num']}/7：{ph['name']} {pending}")
+            lines.append(f"阶段 {ph['num']}/8：{ph['name']} {pending}")
     if state == "阶段二：资料研究":
         lines.append("")
         lines.append("ℹ 阶段二为双义态：资料就绪（有链接+完整度≥60）→ 进入阶段3 yt-fenxi；未就绪 → yt-ziliao 补采")
@@ -146,6 +155,7 @@ def default_config(workspace_root: str = "~/Documents/YouTuber工作流") -> dic
             "cards": "选题分析卡",      # fenxi 分析卡落这里
             "scripts_out": "脚本",      # jiaoben 脚本工作区
             "briefs": "制作四件套",     # yt-zhizuo 本地存档落这里
+            "keywords": "关键词库",     # yt-guanjianci 词库落这里
         },
         "pool": {"base_token": "", "table_id": "",
                  "note": "选题池定位符；空则路由时现场问用户或读 yt-fenxi config.yaml"},
@@ -173,7 +183,7 @@ def resolve_dir(cfg: dict, key: str) -> str:
 # ---------- 子技能安装检测 ----------
 
 SKILL_SEARCH_DIRS = ["~/.agents/skills", "~/.claude/skills"]
-SUB_SKILLS = ["yt-ziliao", "yt-fenxi", "yt-jiaoben", "yt-zhizuo"]
+SUB_SKILLS = ["yt-ziliao", "yt-fenxi", "yt-jiaoben", "yt-zhizuo", "yt-guanjianci"]
 
 
 def detect_skills() -> dict:

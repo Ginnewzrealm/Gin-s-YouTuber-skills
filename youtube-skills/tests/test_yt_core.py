@@ -51,6 +51,10 @@ class TestRouteAdvice(unittest.TestCase):
         adv = yc.route_advice("待发布", has_materials=True, completeness=85)
         self.assertIn("agrici", adv["skill"])
 
+    def test_tuijianqi_goes_to_guanjianci(self):
+        adv = yc.route_advice("推荐期", has_materials=True, completeness=85)
+        self.assertEqual(adv["skill"], "yt-guanjianci")
+
     def test_published_placeholder(self):
         adv = yc.route_advice("已发布", has_materials=True, completeness=85)
         self.assertIn("fupan", adv["skill"])
@@ -62,7 +66,7 @@ class TestRouteAdvice(unittest.TestCase):
 
     def test_every_phase_skill_field_nonempty(self):
         for state in ["阶段一：想法记录", "阶段二：资料研究", "阶段三：确认选题",
-                      "阶段四：内容制作", "制作中", "待发布", "已发布", "已淘汰"]:
+                      "阶段四：内容制作", "制作中", "待发布", "已发布", "推荐期", "已淘汰"]:
             adv = yc.route_advice(state, has_materials=True, completeness=85)
             self.assertTrue(adv["skill"], f"{state} 路由为空")
             self.assertTrue(adv["next_action"], f"{state} next_action 为空")
@@ -73,13 +77,13 @@ class TestRenderMacro(unittest.TestCase):
 
     def test_seven_phases_and_gates(self):
         out = yc.render_macro("阶段二：资料研究")
-        for kw in ["阶段 1/7", "阶段 2/7", "阶段 3/7", "阶段 4/7", "阶段 5/7", "阶段 6/7", "阶段 7/7",
+        for kw in ["阶段 1/8", "阶段 2/8", "阶段 3/8", "阶段 4/8", "阶段 5/8", "阶段 6/8", "阶段 7/8", "阶段 8/8",
                    "硬闸门", "当前"]:
             self.assertIn(kw, out)
 
     def test_phase_names_cover_chain(self):
         out = yc.render_macro("阶段一：想法记录")
-        for kw in ["选题立项", "资料采集", "选题分析", "脚本制作", "内容制作", "发布包装", "数据复盘"]:
+        for kw in ["选题立项", "资料采集", "选题分析", "脚本制作", "内容制作", "发布包装", "数据复盘", "推荐期优化"]:
             self.assertIn(kw, out)
 
     def test_eliminated_shown_as_terminal(self):
@@ -102,6 +106,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         self.assertEqual(cfg["dirs"]["reports"], "资料报告")
         self.assertEqual(cfg["dirs"]["cards"], "选题分析卡")
         self.assertEqual(cfg["dirs"]["briefs"], "制作四件套")
+        self.assertEqual(cfg["dirs"]["keywords"], "关键词库")
         self.assertTrue(cfg["workspace_root"].startswith("/"))  # ~ 已展开
 
     def test_roundtrip(self):
