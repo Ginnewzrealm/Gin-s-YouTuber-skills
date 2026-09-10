@@ -1,0 +1,7 @@
+# yt-ziliao 配置模板
+# 复制为 config.yaml 后生效（config.yaml 已被 gitignore，不入库）
+
+# 网页 AI 粗采层开关（步骤 4.7）
+# true  = 默认优先粗采层（DeepSeek/千问/Kimi 轮换出线索），不可用时自动降级纯 WebSearch
+# false = 永久关闭粗采层，只走纯 WebSearch 路线
+webai_collection: true
