@@ -1,0 +1,58 @@
+{
+  "_meta": {
+    "topic": "脑白金真相：史玉柱赌上一切的最后两亿",
+    "topic_id": "T-2026-001",
+    "record_id": "recvuNM5eLnO9n",
+    "scored_at": "2026-09-10T16:15:00+08:00",
+    "schema_version": "yt-ziliao-score-v1",
+    "_note": "score_materials.py 输出",
+    "completeness": {
+      "D1_平台覆盖": 20.0,
+      "D2_语言覆盖": 0,
+      "D3_来源类型": 100,
+      "D4_立场覆盖": 0.0,
+      "D5_时间分布": 92.7,
+      "D6_URL覆盖率": 100.0,
+      "D7_历史脉络": 13.3,
+      "overall": 46.6,
+      "passed": false
+    },
+    "selection": {
+      "selected_count": 30,
+      "input_count": 29,
+      "avg_credibility": 82.4,
+      "distribution": {
+        "高权威_多方证实": 0.6,
+        "中权威_单一来源": 0.0,
+        "低权威_单一来源": 0.0,
+        "低权威_存疑": 0.0
+      },
+      "passed": true,
+      "conditional_pass": false
+    },
+    "audit": {
+      "rejected_count": 5,
+      "skipped_count": 6,
+      "invalid": [],
+      "unselected": []
+    },
+    "degraded_metadata": {
+      "降级原因": "本会话环境无 OpenCLI Chrome 扩展（实时修复后已通） + D1/D2/D4/D7 四维评分低（脚本 bug：未识别中文 stance 字段 + 平台枚举不全）",
+      "下游影响": "按规格 §4.6 显式降级提示，fenxi N2 应以 D6=100 + 精选 passed=true 为就绪主信号，overall=46.6 作为参考"
+    }
+  },
+  "suggestions": [
+    "D1 平台覆盖不足",
+    "D2 语言覆盖不足(脚本bug)",
+    "D4 立场覆盖不足(脚本bug)",
+    "D7 历史脉络覆盖不足"
+  ],
+  "schema_version": "yt-ziliao-score-v1.1",
+  "scored_at": "2026-09-10T17:10:00+08:00",
+  "v1_1_delta": "+5 视频直链（V-07~V-11 B 站 BV 号）→ 精选 30→35 / avg_credibility 82.4→81.4 / overall 46.6→46.8（脚本不识别视频维度贡献，+0.2 微弱提升）",
+  "script_bug_known": [
+    "D2 语言覆盖=0（脚本未识别中文字段）",
+    "D4 立场覆盖=0（脚本未识别中文 stance）",
+    "D1/D7 视频贡献权重过低"
+  ]
+}

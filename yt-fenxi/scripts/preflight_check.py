@@ -84,13 +84,9 @@ def api_key_check():
 
 
 def output_dir_check(cfg):
-    raw = (cfg or {}).get("output_dir", "")
-    if not raw:
-        check("output-dir", "block", False, "config.yaml 缺少 output_dir", "初始化问答时确认分析卡存放路径")
-        return
-    path = os.path.expanduser(raw)
-    os.makedirs(path, exist_ok=True)
-    check("output-dir", "block", True, f"分析卡目录就绪: {path}")
+    # 2026-09-10 存储重构：分析卡=技能内 workspace/<编号>/，不再用 config.yaml output_dir。
+    # 此检查保留为 always-ok 的桩（兼容未来再次启用时）
+    check("output-dir", "block", True, "分析卡=技能内 workspace/<编号>/（v2.8.0 重构后无独立配置）")
 
 
 def main():

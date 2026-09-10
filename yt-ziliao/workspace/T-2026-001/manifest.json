@@ -1,0 +1,25 @@
+{
+  "topic_id": "T-2026-001",
+  "report_url": "https://la9zp1rfvv9.feishu.cn/file/In7tbWIfvoXqtRxbuCOcruYzn3d",
+  "generated_from": "delivered_report_parse",
+  "skill_version": "2.6.0",
+  "materials": [],
+  "disputes": [],
+  "angles": [],
+  "audit": {
+    "rejected": [],
+    "skipped": [],
+    "unselected": [],
+    "invalid": []
+  },
+  "completeness": {},
+  "counts": {
+    "materials": 0,
+    "disputes": 0,
+    "angles": 0
+  },
+  "warnings": [
+    "appendix_missing:A.1,A.2,A.3",
+    "missing_audit:报告无附录审计链且未传 score 输出"
+  ]
+}
