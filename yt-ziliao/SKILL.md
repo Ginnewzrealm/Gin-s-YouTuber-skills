@@ -400,6 +400,8 @@ Skill(skill="lark-base")    # 多维表格读写
 
 **优先消费粗采层线索**：若步骤 4.7 产出了 `raw/webai_clues.json`，子 Agent 先按其中 `verify_status=accepted` 的 URL 精读正文，再针对缺口补搜（补搜部分照旧用 WebSearch/WebFetch）。粗采层未启用或无线索时，完全照旧执行。
 
+**文书员模式（步骤 5'，v2.10.0，默认启用）**：对已验证 URL 清单，优先让网页 AI 逐页读+结构化（强约束 prompt，详见粗采层文档 §六），产出 `raw/webai_structured.json`；子 Agent 只做三件事——抽验 20% + 双源核验 + 立场/权威标注。**降级**：`webai_structured: false`、CDP/provider 不可用、或抽验变形率 >10% → 该页/该批次回退 WebFetch 子 Agent 读+手写。
+
 **商业拆局类选题（公司/人物/产品拆解）**：四路子 Agent 是"运输层"不变，检索内容按 [references/挖掘手册-v2.md](references/挖掘手册-v2.md) 的三层颗粒×五维信源×检索语法组织（人→维度一/四，产品→维度二，公司/关卡→维度三/五 a）；挖到的料仍按六章模板归位（归位映射见手册 §六）。手册五条约束条（禁定性词/标信源类型/锚定证据/五维封闭/归因纪律）全程生效。
 
 子 Agent 生成搜索词和候选 URL 后，主流程统一调用 OpenCLI 或 WebSearch/WebFetch 读取内容。

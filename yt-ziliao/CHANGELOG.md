@@ -20,3 +20,11 @@
 - **新增 scripts/generate_toc.py**：推送飞书前自动生成目录区块（<!-- TOC --> 标记，幂等可重复跑），解决飞书 .md 无大纲问题
 - **粗采层增强**：新增子任务④视频线索（千问/Kimi 出"节目名+年份"，B 站 API 按图索骥）
 - **双源制制度化**：步骤 6 标注节明文硬规则——数字/引语双源印证，单源降档，无源 rejected
+
+### v2.10.0 — 文书员模式（步骤 5'：网页 AI 精读+结构化）
+
+- **默认启用**：对已验证 URL 清单，网页 AI 逐页读+吐 JSON 结构化条目（强约束 prompt：逐字照抄/禁归纳/原文没有填空），子 Agent 只做抽验 20% + 双源核验 + 立场标注——省 Token 的本质从"每页 WebFetch"变"抽验 20% 页"
+- **三重降级**：配置级（webai_structured:false）/ 运行时级（CDP 或 provider 不可用）/ 质量级（抽验变形率>10% 或单页 unreadable → 该页精准降级 WebFetch，不整批作废）
+- **新中间产物**：raw/webai_structured.json（带 receipt，审计链不断）；materials.json schema 不变
+- **实测依据**：DeepSeek 强约束提取 8/8 字段忠实原文、无编造；publish_date 比手工条目更准；暴露我方 v1.1 手工条目污染——双源核验对 AI 与人工一视同仁
+- 局限：单样本单 provider，试点期须 3-5 个不同来源类型验证

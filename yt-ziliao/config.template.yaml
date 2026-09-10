@@ -5,3 +5,8 @@
 # true  = 默认优先粗采层（DeepSeek/千问/Kimi 轮换出线索），不可用时自动降级纯 WebSearch
 # false = 永久关闭粗采层，只走纯 WebSearch 路线
 webai_collection: true
+
+# 文书员模式（步骤 5'）：网页 AI 精读+结构化（webai_structured）
+# true  = 默认优先网页AI读+JSON结构化，子Agent只抽验20%（省Token）
+# false = 回退子Agent WebFetch读+手写模式
+webai_structured: true
