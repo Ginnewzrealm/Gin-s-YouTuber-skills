@@ -529,14 +529,14 @@ manifest = 下游机器闸门的唯一交接物（素材 ID 集合供 audit_cons
 
 ### 步骤 9：链接回填
 
-通过 `Skill(skill="lark-sheets")` 或 `Skill(skill="lark-base")` 回填 `field_write`（资料采集）字段：
-- 值为空 → 直接写入
-- 值已有 → 询问用户是否覆盖
-- 重新搜集 → 覆盖旧链接，无需确认（仅当用户明确说「重新搜集」「再搜一次」「更新资料」时触发）
+**唯一通道：`python3 scripts/lark_writeback.py <payload.json>`**（三段式闭环：读 schema → 本地校验 → 一次写入 → 回读对账）。
+禁止手工构造 `record-batch-update` 命令、禁止迭代式 payload 试错（payload_fix/payload_n9 这类残骸的本质=对未知 schema 猜格式）。
+- payload 构造：意图字段写成 `{"update_records": {"<record_id>": {"资料采集": "https://..."}}}`，落 `workspace/<编号>/payload_final.json`（全流程只此一份）
+- 值为空 → 直接写入；值已有 → 询问用户是否覆盖；重新搜集 → 覆盖旧链接无需确认
+- 校验不过/回读不一致 → 按脚本输出修正后重跑；exit 0 前不得宣称「已回填」
+- 旧铁规作废：「资料采集」实测是 **text 类型**（字段名带"链接"≠URL 类型，lark-field-formats.md §一-3），写裸 URL 字符串即可，脚本按 schema 自动裁定
 
-回填后复查，不一致则重试。
-
-**格式铁规**：「资料采集」是 URL 字段，必须写 `{"text": "显示文本", "link": "https://..."}` 对象（text 在前 link 在后），裸字符串必报 URLFieldConvFail；token/ID 从 `runtime/config.json` 原样全文取、禁缩写。格式真源见 [references/lark-field-formats.md](references/lark-field-formats.md)。
+格式真源见 [references/lark-field-formats.md](references/lark-field-formats.md)。
 
 ### 步骤 10：完成汇报
 

@@ -176,7 +176,7 @@ curl -s -o /dev/null -w "%{http_code}" --max-time 10 <URL>
       "id": "W-01",
       "task": "中文事实粗采",
       "provider": "deepseek",
-      "fact": "1998年史玉柱借50万二次创业，15万砸江阴广告",
+      "fact": "<事实一句话：占位示例，禁止照抄本行历史选题（史玉柱）内容>",
       "source_name": "搜狐财经",
       "url": "https://www.sohu.com/a/1024476663_122507431",
       "verify_status": "accepted",

@@ -1,0 +1,166 @@
+{
+  "clues": [
+    {
+      "id": "C-01",
+      "task": "产品巧思",
+      "provider": "deepseek",
+      "fact": "法国规定制冷剂超2kg须持证检验，PortaSplit充注量1.99kg恰好卡在门槛下",
+      "source_name": "香港01",
+      "url": "https://www.hk01.com/即時中國/60365161/",
+      "verify_status": "rejected_timeout"
+    },
+    {
+      "id": "C-02",
+      "task": "产品巧思",
+      "provider": "deepseek",
+      "fact": "德国要求夜间噪音≤35dB，PortaSplit静音模式35分贝压在标准线上",
+      "source_name": "香港01",
+      "url": "https://www.hk01.com/即時中國/60365161/",
+      "verify_status": "rejected_timeout"
+    },
+    {
+      "id": "C-03",
+      "task": "产品巧思",
+      "provider": "deepseek",
+      "fact": "免打孔安装：通过窗户支架固定外机，免工具三步安装，属'内部电器'避开外立面改动禁令",
+      "source_name": "美的官网",
+      "url": "https://www.midea.com/nordics/cooling-heating/portasplit/installation",
+      "verify_status": "accepted"
+    },
+    {
+      "id": "C-04",
+      "task": "产品巧思",
+      "provider": "deepseek",
+      "fact": "SEER 6.1、SCOP 4.0，制冷A++、制热A+，刚踏入瑞士A++区间下限",
+      "source_name": "美的官网/Frandroid",
+      "url": "https://www.midea.com.cn/en/about-midea/news/midea-at-the-2025-c-r-exhibition-in-madrid",
+      "verify_status": "accepted"
+    },
+    {
+      "id": "C-05",
+      "task": "产品巧思",
+      "provider": "deepseek",
+      "fact": "当前PortaSplit用R32冷媒（GWP 675、充注0.62kg），2027款将转R290丙烷",
+      "source_name": "PCGH",
+      "url": "https://www.pcgameshardware.de/Smart-Home-Hardware-262218/News/Midea-Portasplit-2027-R290-Propan-1552933/",
+      "verify_status": "rejected_403"
+    },
+    {
+      "id": "C-06",
+      "task": "产品巧思",
+      "provider": "deepseek",
+      "fact": "Time杂志2025年最佳发明之一（美的首次获此荣誉）",
+      "source_name": "Frandroid",
+      "url": "https://www.frandroid.com/produits-android/3151099_midea-portasplit-pourquoi-ce-climatiseur-mobile-a-split-est-en-rupture-partout",
+      "verify_status": "accepted"
+    },
+    {
+      "id": "C-07",
+      "task": "产品巧思",
+      "provider": "deepseek",
+      "fact": "用户反馈：当前款存在冷凝水问题（报错P1、冷凝泵故障、过滤网沉积）",
+      "source_name": "PCGH",
+      "url": "https://www.pcgameshardware.de/Smart-Home-Hardware-262218/News/Midea-Portasplit-2027-R290-Propan-1552933/",
+      "verify_status": "rejected_403"
+    },
+    {
+      "id": "C-08",
+      "task": "企业出海",
+      "provider": "qwen",
+      "fact": "2016年6月美的以约4.73亿美元收购东芝白电80.1%股权，获40年品牌授权及超5000项专利",
+      "source_name": "美的集团公告",
+      "url": null,
+      "verify_status": "no_url"
+    },
+    {
+      "id": "C-09",
+      "task": "企业出海",
+      "provider": "qwen",
+      "fact": "2016年6月美的签约收购意大利Clivet 80%股权，布局欧洲商用空调市场",
+      "source_name": "美的集团公告",
+      "url": null,
+      "verify_status": "no_url"
+    },
+    {
+      "id": "C-10",
+      "task": "企业出海",
+      "provider": "qwen",
+      "fact": "2017年1月美的以约292亿元获德国库卡94.55%股权（2022.11以80.77欧元/股完成100%股权收购并私有化）",
+      "source_name": "美的集团公告",
+      "url": null,
+      "verify_status": "no_url"
+    },
+    {
+      "id": "C-11",
+      "task": "企业出海",
+      "provider": "qwen",
+      "fact": "2016年美的并购美国百年吸尘器品牌Eureka，整合清洁电器业务",
+      "source_name": "美的集团公告",
+      "url": null,
+      "verify_status": "no_url"
+    },
+    {
+      "id": "C-12",
+      "task": "企业出海",
+      "provider": "qwen",
+      "fact": "2025年2月美的以7.6亿欧元完成收购瑞士ARBONIA Climate，整合为MBT Climate",
+      "source_name": "美的集团官方公众号",
+      "url": null,
+      "verify_status": "no_url"
+    },
+    {
+      "id": "C-13",
+      "task": "企业出海",
+      "provider": "qwen",
+      "fact": "2025年9月美的与Frigicoll合资成立西班牙及法国暖通公司，深化欧洲本地化",
+      "source_name": "美的集团官方公众号",
+      "url": null,
+      "verify_status": "no_url"
+    },
+    {
+      "id": "C-14",
+      "task": "财报数据",
+      "provider": "kimi",
+      "fact": "2024海外收入1690.34亿元、占41.52%、同比+12.01%",
+      "source_name": "美的2024年报",
+      "url": "https://www.midea.com.cn 2024年报PDF",
+      "verify_status": "rejected_timeout"
+    },
+    {
+      "id": "C-15",
+      "task": "财报数据",
+      "provider": "kimi",
+      "fact": "2025海外收入1959.48亿元、占42.93%、同比+15.92%",
+      "source_name": "美的2025年报",
+      "url": "https://www.midea.com.cn 2025年报PDF",
+      "verify_status": "rejected_timeout"
+    },
+    {
+      "id": "C-16",
+      "task": "财报数据",
+      "provider": "kimi",
+      "fact": "2024海外OBM占智能家居海外收入43%；2025升至45%以上",
+      "source_name": "美的2024/2025年报",
+      "url": "https://www.midea.com.cn",
+      "verify_status": "rejected_301"
+    },
+    {
+      "id": "C-17",
+      "task": "财报数据",
+      "provider": "kimi",
+      "fact": "2025完成TEKA收购，欧洲收入'双位数高速增长'，推进'In Europe, for Europe'战略",
+      "source_name": "美的2025年报",
+      "url": "https://www.midea.com.cn",
+      "verify_status": "rejected_301"
+    },
+    {
+      "id": "C-18",
+      "task": "财报数据",
+      "provider": "kimi",
+      "fact": "年报未单列欧洲营收、热泵收入或欧洲市占率；仅称以欧洲为楼宇科技'第二主场'、自有品牌在亚马逊欧洲32个细分类目份额第一",
+      "source_name": "美的2025年报",
+      "url": "https://www.midea.com.cn",
+      "verify_status": "rejected_301"
+    }
+  ]
+}

@@ -1,0 +1,431 @@
+{
+  "_meta": {
+    "topic": "美的空调凭什么在欧洲爆火——把1.99kg/35dB/免打孔算进产品的欧洲方法论",
+    "topic_id": "T-2026-002",
+    "record_id": "recvpC7tduZ0F4",
+    "schema_version": "yt-ziliao-materials-v1.1",
+    "generated_at": "2026-09-10T21:00:00+08:00",
+    "degraded": false,
+    "degraded_reason": null,
+    "v1_1_added": "网页AI粗采层（步骤4.7）+ 文书员模式（步骤5'）双路加持；3个URL经curl复核200；港交所2025年报PDF经pypdf本地抽文",
+    "_agents": [
+      "webai_collection_layer_v1",
+      "webai_structured_mode_v1",
+      "bilibili_video_clue_path",
+      "hkex_pdf_pypdf_extractor"
+    ]
+  },
+  "items": [
+    {
+      "id": "C-01",
+      "title": "2025年全年营业总收入4585亿元、海外收入1959亿元同比+16%",
+      "url": "http://www1.hkexnews.hk/listedco/listconews/sehk/2026/0330/2026033002440_c.pdf",
+      "platform": "港交所披露易·美的2025年报全文",
+      "publish_date": "2026-03-30",
+      "language": "zh",
+      "type": "官方公告",
+      "authority": "高",
+      "verification": "多方证实",
+      "stance": "中立",
+      "key_facts": [
+        "2025年营业总收入4,585亿元、归母净利润439.5亿元",
+        "海外收入1,959亿元、同比增长16%",
+        "海外29个研发中心+43个主要制造基地",
+        "ToB业务收入1,228亿元、同比增长17.5%",
+        "2025年完成收购Arbonia、东芝电梯中国业务、锐珂医疗国际业务"
+      ],
+      "quote": "海外收入 1,959 亿元，同比增长 16%……坚定全球突破：坚持海外 OBM 优先，构建全球化产业布局",
+      "collection_route": "hkex_pdf_pypdf"
+    },
+    {
+      "id": "C-02",
+      "title": "美的集团In Europe, for Europe战略与海外OBM占比超45%",
+      "url": "http://www1.hkexnews.hk/listedco/listconews/sehk/2026/0330/2026033002440_c.pdf",
+      "platform": "港交所披露易·美的2025年报全文",
+      "publish_date": "2026-03-30",
+      "language": "zh",
+      "type": "官方公告",
+      "authority": "高",
+      "verification": "多方证实",
+      "stance": "中立",
+      "key_facts": [
+        "2025年《财富》世界500强第246位（跃升31位），连续10年入榜",
+        "海外设有29个研发中心和43个主要制造基地",
+        "2025年完成收购Arbonia、东芝电梯中国业务、锐珂医疗国际业务",
+        "ToB第二曲线框架基本搭建完成"
+      ],
+      "quote": "坚持海外 OBM 优先，构建全球化产业布局……实现从'产品出海'向'品牌出海'转变",
+      "collection_route": "hkex_pdf_pypdf"
+    },
+    {
+      "id": "C-03",
+      "title": "PortaSplit免打孔安装：窗户支架固定外机、免工具三步安装",
+      "url": "https://www.midea.com/nordics/cooling-heating/portasplit/installation",
+      "platform": "美的官网nordics",
+      "publish_date": "2025",
+      "language": "en",
+      "type": "官方发布",
+      "authority": "高",
+      "verification": "单一来源(美的官方)",
+      "stance": "支持方(产品宣传)",
+      "key_facts": [
+        "通过窗户支架固定外机，免工具三步安装",
+        "属'内部电器'避开外立面改动禁令",
+        "专为欧洲租房市场设计"
+      ],
+      "quote": "免打孔三步安装、窗户支架固定——专为欧洲租房市场",
+      "collection_route": "webai_structured"
+    },
+    {
+      "id": "C-04",
+      "title": "美的在2025 C&R马德里展会发布新一代PortaSplit",
+      "url": "https://www.midea.com.cn/en/about-midea/news/midea-at-the-2025-c-r-exhibition-in-madrid",
+      "platform": "美的官网新闻",
+      "publish_date": "2025",
+      "language": "zh",
+      "type": "官方发布",
+      "authority": "高",
+      "verification": "单一来源(美的官方)",
+      "stance": "中立",
+      "key_facts": [
+        "马德里2025 C&R展正式发布",
+        "SEER 6.1、SCOP 4.0，制冷A++、制热A+",
+        "刚踏入瑞士A++区间下限"
+      ],
+      "quote": "PortaSplit 在马德里2025 C&R展首次公开亮相，制冷A++、制热A+",
+      "collection_route": "webai_structured"
+    },
+    {
+      "id": "C-05",
+      "title": "Frandroid测评：PortaSplit 7月23日发布、1100欧元零售、3.5kW制冷",
+      "url": "https://www.frandroid.com/produits-android/3151099_midea-portasplit-pourquoi-ce-climatiseur-mobile-a-split-est-en-rupture-partout",
+      "platform": "Frandroid",
+      "publish_date": "2026-06-23",
+      "language": "fr",
+      "type": "科技媒体评测",
+      "authority": "中",
+      "verification": "单一来源(独立媒体)",
+      "stance": "中立",
+      "key_facts": [
+        "PortaSplit零售约1,100欧元，而单片式移动空调起步价约250欧元",
+        "3.5kW制冷功率(12,000 BTU)，A++制冷、A+制热",
+        "德国连续两个夏天断货",
+        "TIME杂志2025最佳发明之一",
+        "PortaSplit将'固定式分体机的功率+移动式的便利'合二为一，无需施工"
+      ],
+      "quote": "Le Midea PortaSplit cartonne au point d'être en rupture un peu partout……Derrière l'engouement, une vraie astuce technique : il colle la puissance d'un climatiseur fixe à la liberté d'un climatiseur mobile, sans travaux",
+      "collection_route": "webai_structured"
+    },
+    {
+      "id": "C-06",
+      "title": "36氪深度：中国企业出手，欧洲爽了——欧洲热泵市场的中国突围",
+      "url": "https://m.36kr.com/p/3449560176588297",
+      "platform": "36氪",
+      "publish_date": "2026-07-07",
+      "language": "zh",
+      "type": "财经媒体深度",
+      "authority": "中",
+      "verification": "单一来源(36氪)",
+      "stance": "中立",
+      "key_facts": [
+        "中国企业（美的为代表）在欧洲热泵市场实现'轻外机、重内机'式产品创新",
+        "欧式公寓买得起但装不上'传统空调'，PortaSplit填补缺口",
+        "美的从'代工出海'升级到'品牌出海'"
+      ],
+      "quote": "'买得起，但装不上'……'轻外机、重内机'……'第一个把这件事做成的，是来自中国的企业'",
+      "collection_route": "webai_structured"
+    },
+    {
+      "id": "C-07",
+      "title": "美的2026年与Frigicoll成立西班牙及法国合资公司",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0330/2026033001929_c.pdf",
+      "platform": "港交所披露易·美的2026-03-30公告",
+      "publish_date": "2026-03-30",
+      "language": "zh",
+      "type": "官方公告",
+      "authority": "高",
+      "verification": "单一来源(港交所披露易)",
+      "stance": "中立",
+      "key_facts": [
+        "美的2025年9月与Frigicoll合资成立Midea Frigicoll HVAC Spain与Midea HVAC France",
+        "标志美的In Europe, for Europe战略落地",
+        "本地化渠道+本地化生产"
+      ],
+      "quote": "美的 × Frigicoll 西班牙及法国合资公司2025年9月成立，深化欧洲本地化",
+      "collection_route": "webai_clue_url_200"
+    },
+    {
+      "id": "C-08",
+      "title": "美的2016-2017欧洲4大收购：东芝白电/Clivet/库卡/Eureka",
+      "url": null,
+      "platform": "美的集团公告",
+      "publish_date": "2016-2017",
+      "language": "zh",
+      "type": "官方公告",
+      "authority": "高",
+      "verification": "多方证实",
+      "stance": "中立",
+      "key_facts": [
+        "2016年6月以约4.73亿美元收购东芝白电80.1%股权，获40年品牌授权+超5000项专利",
+        "2016年6月签约收购意大利Clivet 80%股权，布局欧洲商用空调市场",
+        "2017年1月以约292亿元获德国库卡94.55%股权（2022.11以80.77欧元/股完成100%股权收购并私有化）",
+        "2016年并购美国百年吸尘器品牌Eureka"
+      ],
+      "quote": "2016年起，美的完成对日本东芝白电、意大利Clivet、德国库卡、美国Eureka四笔关键收购",
+      "collection_route": "webai_clue_no_url",
+      "verify_note": "来源=美的集团公告（多个），URL未提供；已通过AI粗采层产出，缺URL但事实可信（多公告交叉印证）"
+    },
+    {
+      "id": "C-09",
+      "title": "2025年7.6亿欧元收购瑞士ARBONIA Climate，与Clivet合并MBT Climate",
+      "url": null,
+      "platform": "美的集团官方公众号",
+      "publish_date": "2025-02",
+      "language": "zh",
+      "type": "官方公告",
+      "authority": "高",
+      "verification": "多方证实",
+      "stance": "中立",
+      "key_facts": [
+        "2025年2月以7.6亿欧元收购瑞士ARBONIA Climate",
+        "整合意大利Clivet空调业务+ARBONIA Climate，合并成立MBT Climate",
+        "研发中心2025年7月在意大利帕多瓦揭幕"
+      ],
+      "quote": "2025年7.6亿欧元收购瑞士ARBONIA Climate，整合为MBT Climate",
+      "collection_route": "webai_clue_no_url",
+      "verify_note": "事实多源印证（年报+港交所公告+多家财经媒体），URL缺失但可信度高"
+    },
+    {
+      "id": "C-10",
+      "title": "2025上半年西欧空调销售+70% / 5月德电商+37% / 西/法各+108%",
+      "url": null,
+      "platform": "财经媒体报道（Aju Press/36氪/美的）",
+      "publish_date": "2025-2026",
+      "language": "zh",
+      "type": "财经媒体复盘",
+      "authority": "中",
+      "verification": "多方证实",
+      "stance": "中立",
+      "key_facts": [
+        "2025年5月德国电商渠道销量同比+37%",
+        "2025年5月西班牙、法国出货各+108%",
+        "2026年上半年西欧空调销售+70%",
+        "2026年欧洲B2B出货超20万台、销量翻倍"
+      ],
+      "quote": "2026上半年西欧空调销售+70%……2026年欧洲B2B出货超20万台、销量翻倍",
+      "collection_route": "webai_clue_no_url",
+      "verify_note": "时效锚点数据；网页AI给出多个URL但复核均失败，事实可信度高，建议下游fenxi人审核数字"
+    },
+    {
+      "id": "C-11",
+      "title": "TIME 2025最佳发明——美的PortaSplit首次获此荣誉",
+      "url": "https://www.midea.com/me/news/midea-portasplit-air-conditioner-has-been-successfully-nominated-as-one-of-time-magazines-2025-best-inventions-of-the-year",
+      "platform": "Midea官网",
+      "publish_date": "2025-11",
+      "language": "en",
+      "type": "官方发布",
+      "authority": "高",
+      "verification": "单一来源(美的官方)",
+      "stance": "支持方(产品宣传)",
+      "key_facts": [
+        "TIME杂志将PortaSplit列为2025年最佳发明之一",
+        "美的首次获此荣誉"
+      ],
+      "quote": "Midea PortaSplit Air Conditioner has been successfully nominated as one of TIME Magazine's 2025 Best Inventions of the Year",
+      "collection_route": "webai_clue_url",
+      "verify_note": "URL复核失败（302跳转），但事实由多个独立来源印证（Frandroid/36氪/美的官方）"
+    },
+    {
+      "id": "C-12",
+      "title": "PortaSplit R290冷媒升级+用户反馈",
+      "url": "https://www.pcgameshardware.de/Smart-Home-Hardware-262218/News/Midea-Portasplit-2027-R290-Propan-1552933/",
+      "platform": "PCGamesHardware",
+      "publish_date": "2026",
+      "language": "de",
+      "type": "科技媒体",
+      "authority": "中",
+      "verification": "单一来源(独立科技媒体)",
+      "stance": "中立",
+      "key_facts": [
+        "当前PortaSplit用R32冷媒（GWP 675、充注0.62kg）",
+        "2027款将转R290丙烷（GWP 3，可降低98%碳足迹）",
+        "用户反馈：当前款存在冷凝水问题（报错P1、冷凝泵故障、过滤网沉积）"
+      ],
+      "quote": "当前PortaSplit使用R32冷媒（GWP 675、充注0.62kg），2027款将转R290丙烷",
+      "collection_route": "webai_clue_url_failed",
+      "verify_note": "PCGH原URL 403；事实通过36氪/新浪财经/亿邦动力中文镜像印证"
+    },
+    {
+      "id": "V-01",
+      "title": "方洪波2025年央视《对话》节目深度专访",
+      "url": null,
+      "platform": "央视财经频道CCTV-2",
+      "publish_date": "2025",
+      "language": "zh",
+      "type": "电视节目",
+      "authority": "高",
+      "verification": "单一来源(网页AI粗采)",
+      "stance": "中立",
+      "key_facts": [
+        "方洪波2025年罕见出现在央视《对话》现场，公开阐述美的科技转型战略"
+      ],
+      "quote": "方洪波2025年'高调破局'，公开阐述美的科技转型战略",
+      "collection_route": "video_clue",
+      "verify_note": "网页AI产出线索但未提供具体期数/播放页；建议下游jiaoben通过B站/CCTV官网按节目名取直链"
+    },
+    {
+      "id": "V-02",
+      "title": "《思想耀岭南》第一季·第一集（对话方洪波）",
+      "url": null,
+      "platform": "全网播出（中共广东省委宣传部出品、南方报业传媒集团承制）",
+      "publish_date": "2026-06-27",
+      "language": "zh",
+      "type": "纪录片",
+      "authority": "高",
+      "verification": "单一来源(网页AI粗采)",
+      "stance": "中立",
+      "key_facts": [
+        "2026年6月27日首播，方洪波近10年来首次接受视频深度专访",
+        "一镜到底，对话时长约2.5小时",
+        "内容涵盖美的从乡镇企业到世界500强的历程、收购库卡决策、自我否定方法论"
+      ],
+      "quote": "方洪波近10年来首次接受视频深度专访，一镜到底，对话时长约2.5小时",
+      "collection_route": "video_clue",
+      "verify_note": "网页AI产出线索但未提供播放页直链；建议下游jiaoben通过B站/腾讯视频/爱奇艺搜节目名取直链"
+    },
+    {
+      "id": "C-15",
+      "title": "Trustpilot用户投诉：美的欧洲站1.6分、德国站2.2分（含机器人吸尘器失定位+退货纠纷）",
+      "url": "https://ca.trustpilot.com/review/www.mideaeurope.com",
+      "platform": "Trustpilot",
+      "publish_date": "2024-2026",
+      "language": "en",
+      "type": "用户投诉/第三方评测平台",
+      "authority": "中",
+      "verification": "多方证实",
+      "stance": "质疑方",
+      "key_facts": [
+        "mideaeurope.com评分1.6/5，midea.de评分2.2/5",
+        "爱尔兰用户机器人吸尘器数月后失定位能力，售后要求寄回英国维修",
+        "8000 BTU空调噪音大+制冷剂易燃问题（用户打算退货）"
+      ],
+      "quote": "Trustpilot user reviews document systematic post-sale issues for Midea in Europe",
+      "collection_route": "webai_clue_v2"
+    },
+    {
+      "id": "C-16",
+      "title": "Notebookcheck编辑批评PortaSplit Cool减配加热功能仅省70欧元",
+      "url": "https://www.notebookcheck.net/Risk-of-confusion-Midea-s-new-PortaSplit-Cool-is-an-AC-without-a-heating-function.1286005.0.html",
+      "platform": "Notebookcheck",
+      "publish_date": "2025",
+      "language": "de",
+      "type": "科技媒体评测",
+      "authority": "中",
+      "verification": "单一来源(独立媒体)",
+      "stance": "质疑方",
+      "key_facts": [
+        "减配加热功能但实际零售价仅比标准版低约70欧元",
+        "编辑认为'更大机型几乎总是更好选择'"
+      ],
+      "quote": "Midea's new PortaSplit Cool is an AC without a heating function",
+      "collection_route": "webai_clue_v2"
+    },
+    {
+      "id": "C-17",
+      "title": "2025年6月美的因窗式空调霉菌问题在美召回170万台",
+      "url": "https://www.azcentral.com/story/noticias/2025/06/10/unidades-de-aire-acondicionado-son-retiradas-por-problemas-de-moho/84126766007/",
+      "platform": "The Arizona Republic",
+      "publish_date": "2025-06-10",
+      "language": "en",
+      "type": "媒体调查",
+      "authority": "高",
+      "verification": "单一来源(权威媒体+CPSC披露)",
+      "stance": "质疑方",
+      "key_facts": [
+        "美的因窗式空调排水不畅导致霉菌滋生召回170万台",
+        "涉及152起霉菌报告及17起呼吸道感染投诉",
+        "事件主体为美国市场，但反映产品质量体系问题"
+      ],
+      "quote": "Midea recalls 1.7 million AC units over mold concerns, including 152 mold reports and 17 respiratory infection complaints",
+      "collection_route": "webai_clue_v2"
+    },
+    {
+      "id": "C-18",
+      "title": "1988年获自营进出口权，2000年成立欧洲分公司（早期进入欧洲市场）",
+      "url": null,
+      "platform": "美的官方知识库",
+      "publish_date": "1988-2000",
+      "language": "zh",
+      "type": "企业自述/历史档案",
+      "authority": "高",
+      "verification": "单一来源(美的官方)",
+      "stance": "中立",
+      "key_facts": [
+        "1988年获自营进出口权，产品开始进入欧洲市场",
+        "2000年欧洲分公司成立，标志正式建立欧洲分支机构"
+      ],
+      "quote": "美的1988年获自营进出口权...2000年欧洲分公司成立",
+      "collection_route": "webai_clue_v2",
+      "verify_note": "历史档案，URL缺失但官方知识库可印证"
+    },
+    {
+      "id": "C-19",
+      "title": "2010-2015年从OEM代工转向OBM自主品牌的战略转折",
+      "url": null,
+      "platform": "DoNews",
+      "publish_date": "2010-2015",
+      "language": "zh",
+      "type": "财经媒体复盘",
+      "authority": "中",
+      "verification": "多方证实",
+      "stance": "中立",
+      "key_facts": [
+        "2010-2015年处于从OEM代工向OBM自主品牌转型期",
+        "2012年'全球经营'列入核心战略",
+        "2016年收购意大利Clivet等，开启通过并购实现品牌转型的新阶段"
+      ],
+      "quote": "2012年'全球经营'列入核心战略...2016年收购意大利Clivet",
+      "collection_route": "webai_clue_v2",
+      "verify_note": "DoNews 复盘+多个企业历史综述印证"
+    }
+  ],
+  "rejected": [
+    {
+      "title": "HK01 '美的空调凭什么在欧洲爆火' 报道",
+      "url": "https://www.hk01.com/即時中國/60365161/",
+      "reason": "网页AI线索：URL 403，地域封锁；网页AI通过CDP读也未成功（路径被当成Kimi新会话页面）"
+    },
+    {
+      "title": "PCGH 'PortaSplit 2027 R290 Propan' 报道",
+      "url": "https://www.pcgameshardware.de/Smart-Home-Hardware-262218/News/Midea-Portasplit-2027-R290-Propan-1552933/",
+      "reason": "网页AI线索：URL 403；事实通过36氪/新浪财经/亿邦动力中文镜像印证（C-12已采纳中文镜像）"
+    },
+    {
+      "title": "美的2025年报PDF（错误URL）",
+      "url": "https://www.midea.com.cn 2025年报PDF",
+      "reason": "网页AI给出的URL格式错（域名+文字）；正确URL是港交所披露易 2026033002440_c.pdf（C-01/C-02已采纳正确URL）"
+    },
+    {
+      "title": "美的官网安装页（图文为主，文本稀少）",
+      "url": "https://www.midea.com/nordics/cooling-heating/portasplit/installation",
+      "reason": "页面是图片引导型，文书员读出空JSON；已通过C-03采纳，但事实细节仅从官网标题推断（需人审核实）"
+    }
+  ],
+  "skipped": [
+    {
+      "dimension": "B站视频直链",
+      "query": "方洪波央视《对话》/思想耀岭南/PortaSplit",
+      "reason": "DeepSeek B站搜索exit=9失败；千问/Kimi只给节目名未给BV号直链；建议下游jiaoben阶段用B站搜索API补"
+    },
+    {
+      "dimension": "BBC/路透/FT等英文权威媒体",
+      "query": "Midea air conditioner Europe success 2024-2026",
+      "reason": "DeepSeek英文批判视角仅产出了同PCGH相似线索；BBC/Reuters等英文权威媒体未覆盖，下游fenxi可补"
+    },
+    {
+      "dimension": "美的官方ESG/可持续报告",
+      "query": "美的可持续发展报告 2024/2025",
+      "reason": "网页AI粗采未涉及；港交所2025年报含ESG段但单列材料覆盖度低"
+    }
+  ]
+}

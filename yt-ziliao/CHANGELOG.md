@@ -2,6 +2,13 @@
 
 ## 2026-09-10
 
+### v2.10.1 — 义务队列生成 + 回写闭环（2026-09-10 美的选题事故复盘落地）
+
+- **build_manifest.py**：manifest 新增 pending_obligations——视频线索无直链→yt-jiaoben 阻塞义务（补 BV 号），其余 no_url→yt-fenxi 非阻塞义务；warnings 同步标 obligation_open
+- **scripts/lark_writeback.py**（新增）：飞书回写三段式闭环（schema 前置→本地校验→一次写入→回读对账），取代手工 record-batch-update 试错；消除 payload_fix/payload_n9 式残骸
+- **SKILL.md 步骤 9**：回填唯一通道改 lark_writeback.py；旧"资料采集=URL 字段必须写对象"铁规作废（实测 text 类型，脚本按 schema 自动裁定）
+- references/网页AI粗采层.md：JSON 示例的史玉柱事实改中性占位（跨选题污染源清除）
+
 ### v2.9.0 — 网页 AI 粗采层（步骤 4.7，最小侵入）
 
 > 背景：资料采集环节读网页 Token 消耗占整条链路 60-70%。本版引入"粗采层"——通过 AgentChat 桥接免费网页 AI（DeepSeek/千问/Kimi 轮换）出线索，我方只精读已验证页面，预期 ziliao 读网页 Token 省 60-75%。

@@ -181,6 +181,36 @@ def build_manifest(report_text: str, completeness: Optional[dict], audit: Option
         audit_out = {"rejected": [], "skipped": [], "unselected": [], "invalid": []}
         warnings.append("missing_audit:报告无附录审计链且未传 score 输出")
 
+    # 义务队列（2026-09-10 防契约静默丢弃）：散文里的"建议下游补 X"必然蒸发，
+    # 结构化义务 + 下游销号闸门才有终态。生成规则：
+    # - 视频线索无直链（V-* 或无 url 的电视/纪录片）→ jiaoben 补 BV 号，阻塞
+    # - 其余 no_url 素材 → fenxi 补可追溯 URL 或确认多源印证，非阻塞
+    obligations = []
+    obl_n = 0
+    for m in materials:
+        mid = m.get("id", "")
+        mtype = m.get("type", "")
+        is_video = mid.startswith("V-") or any(k in mtype for k in ("电视", "纪录片", "视频"))
+        if is_video and not m.get("url"):
+            obl_n += 1
+            obligations.append({
+                "id": f"OBL-{obl_n:02d}",
+                "task": f"补 {mid}《{m.get('title', '')}》播放页直链（B站BV号/官网URL），落入 B-Roll 表",
+                "owner_stage": "yt-jiaoben",
+                "blocking": True,
+                "source": f"video_clue_no_url:{mid}",
+            })
+            warnings.append(f"obligation_open:OBL-{obl_n:02d}→yt-jiaoben")
+        elif not m.get("url"):
+            obl_n += 1
+            obligations.append({
+                "id": f"OBL-{obl_n:02d}",
+                "task": f"补 {mid} 的可追溯 URL，或在分析卡注明多源印证依据",
+                "owner_stage": "yt-fenxi",
+                "blocking": False,
+                "source": f"no_url_material:{mid}",
+            })
+
     return {
         "topic_id": topic_id,
         "report_url": report_url,
@@ -192,6 +222,7 @@ def build_manifest(report_text: str, completeness: Optional[dict], audit: Option
         "audit": audit_out,
         "completeness": completeness or {},
         "counts": {"materials": len(materials), "disputes": len(disputes), "angles": len(angles)},
+        "pending_obligations": obligations,
         "warnings": warnings,
     }
 
