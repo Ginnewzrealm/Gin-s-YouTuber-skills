@@ -1,0 +1,202 @@
+{
+  "topic_id": "T-2026-002",
+  "record_id": "recvpC7tduZ0F4",
+  "report_url": "https://la9zp1rfvv9.feishu.cn/file/OEzQbBlrhoIwNIxjNBLckBttntb",
+  "skill_version": "2.10.0",
+  "materials_count": 19,
+  "materials": [
+    {
+      "id": "C-01",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0330/2026033002440_c.pdf"
+    },
+    {
+      "id": "C-02",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0330/2026033002440_c.pdf"
+    },
+    {
+      "id": "C-03",
+      "url": "https://www.midea.com/nordics/cooling-heating/portasplit/installation"
+    },
+    {
+      "id": "C-04",
+      "url": "https://www.midea.com.cn/en/about-midea/news/midea-at-the-2025-c-r-exhibition-in-madrid"
+    },
+    {
+      "id": "C-05",
+      "url": "https://www.frandroid.com/produits-android/3151099_midea-portasplit-pourquoi-ce-climatiseur-mobile-a-split-est-en-rupture-partout"
+    },
+    {
+      "id": "C-06",
+      "url": "https://m.36kr.com/p/3449560176588297"
+    },
+    {
+      "id": "C-07",
+      "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2026/0330/2026033001929_c.pdf"
+    },
+    {
+      "id": "C-08",
+      "url": null
+    },
+    {
+      "id": "C-09",
+      "url": null
+    },
+    {
+      "id": "C-10",
+      "url": null
+    },
+    {
+      "id": "C-11",
+      "url": "https://www.midea.com/me/news/midea-portasplit-air-conditioner-has-been-successfully-nominated-as-one-of-time-magazines-2025-best-inventions-of-the-year"
+    },
+    {
+      "id": "C-12",
+      "url": "https://www.pcgameshardware.de/Smart-Home-Hardware-262218/News/Midea-Portasplit-2027-R290-Propan-1552933/"
+    },
+    {
+      "id": "C-13",
+      "url": null
+    },
+    {
+      "id": "C-14",
+      "url": null
+    },
+    {
+      "id": "C-15",
+      "url": "https://ca.trustpilot.com/review/www.mideaeurope.com"
+    },
+    {
+      "id": "C-16",
+      "url": "https://www.notebookcheck.net/Risk-of-confusion-Midea-s-new-PortaSplit-Cool-is-an-AC-without-a-heating-function.1286005.0.html"
+    },
+    {
+      "id": "C-17",
+      "url": "https://www.azcentral.com/story/noticias/2025/06/10/unidades-de-aire-acondicionado-son-retiradas-por-problemas-de-moho/84126766007/"
+    },
+    {
+      "id": "C-18",
+      "url": null
+    },
+    {
+      "id": "C-19",
+      "url": null
+    },
+    {
+      "id": "V-01",
+      "url": null,
+      "type": "电视节目",
+      "title": "央视《对话》方洪波专访（2025年线索，直链待补）"
+    },
+    {
+      "id": "V-02",
+      "url": null,
+      "type": "纪录片",
+      "title": "《思想耀岭南》第一季·第一集 对话方洪波"
+    }
+  ],
+  "disputes": [
+    {
+      "id": "D-01",
+      "claim_a": "PortaSplit是中国制造的胜利",
+      "claim_b": "当前款存在冷凝水问题"
+    },
+    {
+      "id": "D-02",
+      "claim_a": "产品逆向设计（针对欧洲法规/标准/居住形态）",
+      "claim_b": "热泵补贴政策+俄乌冲突后能源危机"
+    },
+    {
+      "id": "D-03",
+      "claim_a": "海外自有品牌占比突破45%",
+      "claim_b": "占比≠100%，贴牌仍占大头"
+    }
+  ],
+  "angles": [
+    {
+      "id": "A1",
+      "name": "产品巧思视角"
+    },
+    {
+      "id": "A2",
+      "name": "企业出海方法论视角"
+    },
+    {
+      "id": "A3",
+      "name": "数据反共识视角"
+    },
+    {
+      "id": "A4",
+      "name": "中美欧贸易摩擦下的中国制造突围"
+    }
+  ],
+  "audit": {
+    "rejected": 4,
+    "skipped": 3,
+    "invalid": 0
+  },
+  "pending_obligations": [
+    {
+      "id": "OBL-01",
+      "task": "补 C-08 的可追溯 URL，或在分析卡注明多源印证依据",
+      "owner_stage": "yt-fenxi",
+      "blocking": false,
+      "source": "no_url_material:C-08"
+    },
+    {
+      "id": "OBL-02",
+      "task": "补 C-09 的可追溯 URL，或在分析卡注明多源印证依据",
+      "owner_stage": "yt-fenxi",
+      "blocking": false,
+      "source": "no_url_material:C-09"
+    },
+    {
+      "id": "OBL-03",
+      "task": "补 C-10 的可追溯 URL，或在分析卡注明多源印证依据",
+      "owner_stage": "yt-fenxi",
+      "blocking": false,
+      "source": "no_url_material:C-10"
+    },
+    {
+      "id": "OBL-04",
+      "task": "补 C-13 的可追溯 URL，或在分析卡注明多源印证依据",
+      "owner_stage": "yt-fenxi",
+      "blocking": false,
+      "source": "no_url_material:C-13"
+    },
+    {
+      "id": "OBL-05",
+      "task": "补 C-14 的可追溯 URL，或在分析卡注明多源印证依据",
+      "owner_stage": "yt-fenxi",
+      "blocking": false,
+      "source": "no_url_material:C-14"
+    },
+    {
+      "id": "OBL-06",
+      "task": "补 C-18 的可追溯 URL，或在分析卡注明多源印证依据",
+      "owner_stage": "yt-fenxi",
+      "blocking": false,
+      "source": "no_url_material:C-18"
+    },
+    {
+      "id": "OBL-07",
+      "task": "补 C-19 的可追溯 URL，或在分析卡注明多源印证依据",
+      "owner_stage": "yt-fenxi",
+      "blocking": false,
+      "source": "no_url_material:C-19"
+    },
+    {
+      "id": "OBL-08",
+      "task": "补 V-01《央视《对话》方洪波专访（2025年线索，直链待补）》播放页直链（B站BV号/官网URL），落入 B-Roll 表",
+      "owner_stage": "yt-jiaoben",
+      "blocking": true,
+      "source": "video_clue_no_url:V-01"
+    },
+    {
+      "id": "OBL-09",
+      "task": "补 V-02《《思想耀岭南》第一季·第一集 对话方洪波》播放页直链（B站BV号/官网URL），落入 B-Roll 表",
+      "owner_stage": "yt-jiaoben",
+      "blocking": true,
+      "source": "video_clue_no_url:V-02"
+    }
+  ]
+}

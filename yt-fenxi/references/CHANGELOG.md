@@ -1,6 +1,16 @@
 # yt-fenxi 更新日志
 ## 2026-09-10
 
+### vN6.1 — 单决策函数 + 对账补洞 + 义务队列（2026-09-10 美的选题事故复盘落地）
+
+> 事故：对账表漏 C-13/C-14 却自报 19/19；57 分为刷过 60 产生凑分补采；V-01/V-02 补 BV 号义务三处传散文零执行。
+- **audit_consumption.py 补洞**：no_url 素材退化为按 ID 对账——修复前该脚本只查带 URL 素材，漏条目的卡照样 exit 0（事故实证：修复后对 T-2026-002 卡报 C-13/C-14 未消费）
+- **N2 闸门改单决策函数**：质量闸门（链接有效+审计链完整，阻塞）与覆盖度信号（D1-D7 缺口→N2b 补采建议+下游 risk_notes，非阻塞）分离；「overall ≥ 60 才就绪」作废（双权威废止，补采动机从凑分变补缺口）
+- **新增 scripts/close_obligations.py**：--init 从 manifest 生成义务队列（视频无直链→jiaoben 阻塞；其余 no_url→fenxi 非阻塞）；闸门模式校验销号三终态
+- **SKILL.md**：manifest 提取后必跑 --init、V-* 线索不得丢失（事故：V-01/V-02 在提取时丢失）、N9 前 fenxi 名下义务必销号、跨选题隔离铁律（N6 专名必须映射本卡素材）
+- **回填唯一通道** scripts/lark_writeback.py（同 jiaoben/ziliao 三技能同构）
+- references/scoring-anchors.md 加跨选题隔离声明
+
 ### vN6.1 — 分析卡双写改造（存储重构配套）
 
 > 规格 docs/superpowers/specs/2026-09-10-storage-workspace-design.md。

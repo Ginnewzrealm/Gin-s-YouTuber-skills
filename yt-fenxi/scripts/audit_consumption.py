@@ -58,10 +58,16 @@ def audit(manifest: dict, card_path: str) -> dict:
     unconsumed_materials = []
     for m in manifest.get("materials", []):
         url = m.get("url", "")
-        if not url:
-            continue
-        if normalize_url(url) not in card_urls:
-            unconsumed_materials.append({"id": m.get("id", ""), "url": url, "title": m.get("title", "")})
+        mid = m.get("id", "")
+        if url:
+            if normalize_url(url) not in card_urls:
+                unconsumed_materials.append({"id": mid, "url": url, "title": m.get("title", "")})
+        else:
+            # no_url 素材无法按 URL 对账，退化为按 ID 对账——ID 未出现在卡内任意处
+            # （正文引用或「消费对账」节销号行）即视为静默丢弃（2026-09-10 实战漏洞：
+            # C-13/C-14 缺行但脚本报 19/19 通过，根因即此处只查带 URL 素材）
+            if mid and mid not in haystack:
+                unconsumed_materials.append({"id": mid, "url": None, "title": m.get("title", "")})
 
     unconsumed_disputes = [d["id"] for d in manifest.get("disputes", [])
                            if d.get("id") and d["id"] not in haystack]
