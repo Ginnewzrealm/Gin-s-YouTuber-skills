@@ -42,22 +42,29 @@ LATIN_NAME = re.compile(r"(?<![A-Za-z])([A-Z][a-z]{1,15} [A-Z][a-z]{1,15})(?![A-
 URL_STRIP = re.compile(r"https?://\S+")
 
 def load_script(path):
-    """读取脚本，返回 (扫描行列表, 全文本)。围栏内容保留，只跳过标记行。"""
+    """读取脚本，返回 (扫描行列表, 全文本)。围栏内容保留，只跳过标记行。
+    YAML 只认文首 frontmatter——文件内的 --- 是分隔横线（2026-09-10 实战：
+    三轨格式的 --- 横线被当成 YAML 切换，整段内容被静默跳过）。"""
     lines = open(path, encoding="utf-8").read().splitlines()
-    scan, in_yaml = [], False
-    for ln in lines:
+    yaml_end = -1
+    if lines and lines[0].strip() == "---":
+        for j, ln in enumerate(lines[1:], start=1):
+            if ln.strip() == "---":
+                yaml_end = j
+                break
+    scan, body_lines = [], []
+    for i, ln in enumerate(lines):
         s = ln.strip()
-        if s == "---":
-            in_yaml = not in_yaml
-            continue
-        if in_yaml:
+        if i <= yaml_end:
             continue
         if s.startswith("```"):
             continue  # 围栏标记行跳过；围栏内的三轨正文必须参与扫描
-        if not s or s.startswith("#") or s.startswith("|"):
+        if not s or s.startswith("|"):
             continue
-        scan.append(ln)
-    return scan, "\n".join(scan)
+        scan.append(ln)            # 标题保留——split_ab 靠它切 A/B 区（2026-09-10 修复：
+        if not s.startswith("#"):  # 原实现在这里丢了标题，A/B 切分退化成"全篇当 B 区"，
+            body_lines.append(ln)  # A 区字数/WPM 检查静默失效，事故文件从未被真正验过字数）
+    return scan, "\n".join(body_lines)
 
 def split_ab(lines):
     """按标题切 A 稿/B 稿区。返回 (a_lines, b_lines)；都无则按是否含【听觉】整体判 B 或 A。"""
@@ -87,16 +94,19 @@ def parse_meta(lines):
     return dur, kws
 
 def extract_spoken_blocks(lines):
-    """听觉块 = 【听觉】行 + 引号开头续行，到下一个 【 轨标记为止。"""
+    """听觉块 = 【听觉】/[听觉] 行 + 引号开头续行，到下一个 【 轨标记为止。
+    兼容全角【听觉】与半角 [听觉]/**[听觉]** 两种三轨写法（2026-09-10 实战：
+    A 稿用半角格式，原实现只认全角，A 区口播被静默漏扫）。"""
+    AUD = re.compile(r"[【\[]\s*听觉\s*[】\]]")
     blocks, cur = [], None
     for ln in lines:
         s = ln.strip()
-        if s.startswith("【听觉】") or ("【听觉】" in s):
+        if AUD.search(s):
             if cur:
                 blocks.append(cur)
             cur = ln
         elif cur is not None:
-            if s.startswith(("【", "##")):
+            if s.startswith(("【", "[", "##")):
                 blocks.append(cur)
                 cur = None
             elif s.startswith(('"', "“", "『", "「")):
@@ -140,6 +150,14 @@ def main():
     hard, warn = [], []
     def h(msg): hard.append(msg)
     def w(msg): warn.append(msg)
+
+    # ---- 结构闸：同名章节重复（2026-09-10 实战：单文件出现两个「Part 4 自检报告」，
+    #      一带后缀一不带，精确匹配抓不到——归一化括号后缀后比较）----
+    heads = [re.sub(r"[（(].*$", "", ln.strip()).rstrip()
+             for ln in raw_lines if re.match(r"^## ", ln.strip())]
+    dup = sorted({x for x in heads if heads.count(x) > 1})
+    if dup:
+        h(f"同名章节重复: {'; '.join(dup)}——单一权威版本原则，合并或删除重复节")
 
     # ---- 硬拦截黑名单（含围栏内正文）----
     for name, pat in [("离场词", LEAVING), ("伪现场感", FAKE_SCENE),

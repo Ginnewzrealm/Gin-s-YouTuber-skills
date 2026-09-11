@@ -24,7 +24,7 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 |---|---|
 | "给这个选题写脚本" / 选题已 confirmed 进入脚本阶段 | ✅ 本技能 |
 | 选题还没立项（未过 C 闸门） | ❌ 先回 yt-fenxi |
-| 资料报告缺失/完整度 <60 | ❌ 先回 yt-ziliao 补采 |
+| 资料报告缺失/质量闸门未过（链接失效或审计链不完整） | ❌ 先回 yt-ziliao 补采 |
 | 改脚本（人审反馈后修订） | ✅ 本技能（版本号 +1） |
 | 剪辑/配音/字幕执行 | ❌ 人工或剪辑工具（本技能只出 brief 级标注） |
 
@@ -38,7 +38,7 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 - **开场 3 分钟禁财报**：股票代码/股权占比/财报术语出现在开场区段即硬拦截（scan）。
 - **四层内容必标**：事实/争议/转述/观点——B 稿控制轨显式标 [内容层]，A 稿靠归属话术；全片 [观点] ≥1（HR-8）。
 - **双语人名**：英文人名首次出现必须"中文译名（英文原名）"，后续统一中文简称。
-- **token/ID 原样全文**：从 config.yaml 取，缩写必 400；回填字段前必须先 `+field-list` 查真实字段类型——字段名带"链接"≠URL 类型（实测「选题脚本链接」是 text，只收纯字符串；格式细节见 yt-ziliao/references/lark-field-formats.md）。
+- **回填唯一通道**：`python3 scripts/lark_writeback.py workspace/<编号>/payload_final.json`（schema 前置校验+回读对账闭环，取代"`+field-list` 查类型再手工拼命令"——查 schema 的动作必须在脚本内完成，不能靠人记得）；exit 0 前不得宣称已回填。token/ID 从 config.yaml 取，缩写必 400。
 - **每次阶段跳转同步更新脚本文件头 `当前阶段` 字段**；断点恢复只读文件续跑。
 
 ## Progress
@@ -48,7 +48,8 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 ```markdown
 脚本工程进度（选题编号 T-XXXX-XXX）
 阶段 1/6：输入契约校验 [自动]
-- [ ] Step 0 N9 九字段 + 报告完整度≥60 + config 就绪 [自动]
+- [ ] Step 0 N9 九字段 + 质量闸门（链接有效+审计链完整，非总分≥60）+ config 就绪 [自动]
+- [ ] Step 0.3 义务销号闸：`python3 scripts/close_obligations.py <fenxi manifest.json> --stage yt-jiaoben --resolutions workspace/<编号>/obligations.json --doc workspace/<编号>/03-脚本.md`——blocking 义务未销号不得开工；escalated 义务其 ID 必须出现在交付物「未决义务」节（开工时先建该节登记）。[自动] [硬闸门]
 - [ ] Step 0.5 老选题 N9 契约补建（九字段缺失时，从 yt-fenxi 分析卡+池记录反推，人确认后写入） [自动+确认]
 阶段 2/6：原爆点筛选
 - [ ] Step 1 挖 5-10 候选画面（yt-ziliao 报告+fenxi 反常识点） [自动]
@@ -64,7 +65,7 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 - [ ] Step 8 A 稿删减轮（砍偏离主线 ≥15% → 目标字数）+ 朗读轮（拆句≤20字） [自动]
 - [ ] Step 9 从 A 稿派生 B 稿三轨（画面/拍点/四层标注/凭证） [自动]
 阶段 5/6：质量闸门
-- [ ] Step 10 scan_script.py 硬指标扫描（A 稿：A1/A4/A6/开场财报/人名/金句；B 稿：A2/A3/A5/四层标注） [自动]
+- [ ] Step 10 scan_script.py 硬指标扫描（A 稿：A1/A4/A6/开场财报/人名/金句；B 稿：A2/A3/A5/四层标注）+ scan_provenance.py 溯源扫描（数字事实必带素材标注/出场人名必在素材语料或标演绎/演绎必有免责句） [自动]
 - [ ] Step 11 软维度评分 + 预期留存档位标注 [自动]
 阶段 6/6：人审与交付
 - [ ] Step 12 人审拍板 [硬闸门] [可回环]
@@ -87,7 +88,7 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 ### 阶段 1：输入契约校验
 
 读取 yt-fenxi 分析卡 N9 输出契约九字段（record_id/选题标题/选定切入角度含视角层/核心钩子/目标受众/反常识点清单/待验证项清单/资料采集链接/涉及敏感主体清单）。校验：
-- 九字段齐全 + yt-ziliao 报告链接有效 + 报告完整度 ≥60 → 通过
+- 九字段齐全 + yt-ziliao 报告链接有效 + 质量闸门过（审计链完整，总分仅参考）→ 通过
 - 缺项/完整度不足 → 报缺失清单，指明回 yt-fenxi 或 yt-ziliao，**终止不硬跑**
 - config.yaml 缺失 → 从 config.template.yaml 复制，走初始化问答（池 token/频道阶段）后重跑；飞书目标文件夹=core 共享配置 feishu_root_folder_token + `<编号> <标题>/`；本地=本技能 `workspace/<编号>/`（运行时自清非当前编号目录）
 
@@ -118,7 +119,11 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 ### 阶段 5：质量闸门
 
 1. `python3 scripts/scan_script.py <交付物.md> --duration <分钟>`——A 稿区跑 A1/A4/A6/开场财报闸/人名/金句，B 稿区跑 A2/A3/A5/四层标注，硬拦截全部清零
-2. 软维度评分（原爆点五维 + 划停力 + 赛道契合，0-100）+ **预期留存档位标注**（B1/B2/B3 对应档，标注"未经实证，待 fupan 校准"）
+2. `python3 scripts/scan_provenance.py <交付物.md> <fenxi manifest.json>`——口播行溯源扫描。标注语法（写作时逐行标注，行尾）：
+   - `（C-05）` 事实，素材 ID 必须存在于 manifest（支持 `（C-03/C-05）` 组合）
+   - `（演绎：说明）` 构造内容（合成人物/情景），全文必须另有免责句（"人物为典型用户演绎"类）
+   - `（无源：说明）` 暂无法溯源的主张——**人审签认**后才能保留，否则硬拦截
+3. 软维度评分（原爆点五维 + 划停力 + 赛道契合，0-100）+ **预期留存档位标注**（B1/B2/B3 对应档，标注"未经实证，待 fupan 校准"）
 
 ### 阶段 6：人审与交付
 
@@ -132,7 +137,7 @@ description: Use when 选题已通过 yt-fenxi 立项（confirmed），需要把
 
 | 项 | 约定 |
 |---|---|
-| 输入 | yt-fenxi N9 九字段 + yt-ziliao 报告 URL + 完整度 ≥60 |
+| 输入 | yt-fenxi N9 九字段 + yt-ziliao 报告 URL + 质量闸门（非总分） |
 | 时长档 | 只保留 20-30 分钟一档（拍板）；字数 5600-8400（280 字/分 ±10%） |
 | 输出 | 飞书 `03-脚本.md`（Part 3a A 稿 + Part 3b B 稿）+ 本技能 `workspace/<编号>/` 本地 A/B 双 md 主档 + 「选题脚本链接」URL 回填（空则填） |
 | 下游 | fupan 消费：段落时间码坐标（留存掉粉点映射用）；yt-zhizuo 消费：B-Roll 清单+B 稿三轨（分镜内核） |
